@@ -30,9 +30,10 @@ TODO: tree output here
 
 ## step 0 apps
 
-- [] minimal widgets app + signals/slots
-- [] qml "hello" + integrate c++
-- [] worker-object with qthread
+- [ ] hello world + cmake + qt6
+- [ ] minimal widgets app + signals/slots
+- [ ] qml "hello" + integrate c++
+- [ ] worker-object with qthread
 
 ## step 1 to n
 
@@ -166,13 +167,13 @@ TODO: tree output here
 
 ## documentation to read :D
 
-1. **Before steps 1-3:** Qt Documentation on QApplication and basic widgets
-2. **Before steps 4-5:** QPainter documentation and examples
-3. **Before steps 6-8:** Qt event system and input handling
-4. **Before steps 9-11:** QTimer and animation classes
-5. **Before steps 12-14:** Qt resource system and QSettings
-6. **Before steps 15-18:** Qt Multimedia and animation framework
-7. **Before steps 19-21:** Qt deployment documentation
+- **Before steps 1-3:** Qt Documentation on QApplication and basic widgets
+- **Before steps 4-5:** QPainter documentation and examples
+- **Before steps 6-8:** Qt event system and input handling
+- **Before steps 9-11:** QTimer and animation classes
+- **Before steps 12-14:** Qt resource system and QSettings
+- **Before steps 15-18:** Qt Multimedia and animation framework
+- **Before steps 19-21:** Qt deployment documentation
 
 ## future improvements
 
