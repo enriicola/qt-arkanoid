@@ -121,3 +121,15 @@ If you want, I can spin up a tiny **practice checklist** (widgets app, one QML a
 [8]: https://doc.qt.io/qtcreator/creator-getting-started.html?utm_source=chatgpt.com "Getting Started | Qt Creator Documentation"
 [9]: https://en.wikipedia.org/wiki/Qt_%28software%29?utm_source=chatgpt.com "Qt (software)"
 [10]: https://www.kdab.com/the-eight-rules-of-multithreaded-qt/?utm_source=chatgpt.com "The Eight Rules of Multithreaded Qt"
+
+## What you’ll learn, concretely
+
+* **Qt Quick structure** (imports, items, bindings)
+* **Game loop** with `Timer`, frame-based updates
+* **Input** via `Keys`
+* **Collision math** and simple reflection
+* **Data-driven UI** (HUD bound to score/lives)
+* **Reusable components** (turn bricks/paddle into QML Components later)
+* **Optional C++ hooks** (expose a `GameController` to QML)
+
+TODO: extend this with: sound effects, high-score saving, a JSON level loader in C++, and a tiny `QAbstractListModel` for a high-score table.
