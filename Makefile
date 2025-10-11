@@ -1,4 +1,4 @@
-.PHONY: arkanoid hello-world widgets-signals clean all
+.PHONY: arkanoid hello-world widgets-signals clean all run
 
 arkanoid:
 	@echo "Building Arkanoid game..."
@@ -15,7 +15,21 @@ widgets-signals:
 	mkdir -p build-widgets-signals
 	cd build-widgets-signals && cmake ../widgets-signals && make
 
+run:
+	@APP=$(word 2,$(MAKECMDGOALS)); \
+	if [ -z "$$APP" ]; then \
+		echo "Usage: make run <app-name>"; \
+		echo "Available: hello-world, widgets-signals"; \
+	else \
+		echo "Running $$APP..."; \
+		./build-$$APP/$$APP; \
+	fi
+
+
 clean:
 	rm -rf build*/
 
 all: arkanoid hello-world widgets-signals
+
+%:
+	@:
