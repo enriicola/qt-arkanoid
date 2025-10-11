@@ -14,8 +14,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 add_executable(widgets-signals
     src/main.cpp
-    src/counterwidget.cpp
-    src/counterwidget.h
 )
 
 target_link_libraries(widgets-signals PRIVATE
