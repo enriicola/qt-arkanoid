@@ -16,4 +16,5 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Add step0 projects
-add_subdirectory(step0/*)
+add_subdirectory(step0/hello-world)
+add_subdirectory(step0/widgets-signals)
