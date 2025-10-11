@@ -52,5 +52,6 @@ compile_commands.json
 
 *_qmlcache.qrc
 
-# ignore build directories
-build/
+# ignore build and .vscode directories
+build*/
+.vscode/

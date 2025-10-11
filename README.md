@@ -30,7 +30,7 @@ TODO: tree output here
 
 ## step 0 apps
 
-- [ ] hello world + cmake + qt6
+- [x] hello world + cmake + qt6
 - [ ] minimal widgets app + signals/slots
 - [ ] qml "hello" + integrate c++
 - [ ] worker-object with qthread
