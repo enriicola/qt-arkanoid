@@ -1,24 +1,20 @@
-.PHONY: arkanoid hello-world widgets-signals clean all run
+.PHONY: build clean all step0
 
-arkanoid:
-	@echo "Building Arkanoid game..."
-	@echo "Note: Main Arkanoid game not implemented yet ..."
+all: build
+
+build:
+	@echo "Building all Qt Arkanoid projects..."
 	mkdir -p build
+	cd build && cmake .. && make
 
-hello-world:
-	@echo "Building Hello World..."
-	mkdir -p build-hello-world
-	cd build-hello-world && cmake ../hello-world && make
+step0:
+	@echo "Building step0 projects..."
+	mkdir -p build
+	cd build && cmake .. && make hello-world widgets-signals
 
-widgets-signals:
-	@echo "Building Widgets + Signals/Slots Demo..."
-	mkdir -p build-widgets-signals
-	cd build-widgets-signals && cmake ../widgets-signals && make
+hello-world: build
+widgets-signals: build
+arkanoid: build
 
 clean:
-	rm -rf build*/
-
-all: arkanoid hello-world widgets-signals
-
-%:
-	@:
+	rm -rf build/
