@@ -32,7 +32,7 @@ TODO: tree output here
 
 - [x] 0.1 hello world + cmake + qt6
 - [x] 0.2 minimal widgets app + signals/slots
-- [ ] 0.3 qml "hello" + integrate c++
+- [x] 0.3 qml "hello" + integrate c++ (created, may need Qt modules)
 - [ ] 0.4 worker-object with qthread
 
 ## step 1 to n
