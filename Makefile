@@ -10,11 +10,12 @@ build:
 step0:
 	@echo "Building step0 projects..."
 	mkdir -p build
-	cd build && cmake .. && make hello-world widgets-signals
+	cd build && cmake .. && make hello-world widgets-signals qml-hello
 
 hello-world: build
 widgets-signals: build
 arkanoid: build
+qml-hello: build
 
 clean:
 	rm -rf build/

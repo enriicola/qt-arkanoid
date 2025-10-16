@@ -133,3 +133,9 @@ If you want, I can spin up a tiny **practice checklist** (widgets app, one QML a
 * **Optional C++ hooks** (expose a `GameController` to QML)
 
 TODO: extend this with: sound effects, high-score saving, a JSON level loader in C++, and a tiny `QAbstractListModel` for a high-score table.
+
+## my notes
+
+* qrc -> qt resource collection = tells Qt to bundle these files into the executable
+* qresource, put between tags, is a collection of resources
+* file, put between tags, is the qml file to include (we can access it using 'qrc:/src/main.qml')
