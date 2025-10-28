@@ -16,6 +16,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Qml Quick)
 add_executable(qt-arkanoid
     src/main.cpp
     src/AppState.cpp
+    src/CounterWorker.cpp
     src/qml.qrc
 )
 
