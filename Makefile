@@ -1,21 +1,13 @@
-.PHONY: build clean all step0
+.PHONY: build configure clean run
 
-all: build
+configure:
+	cmake -S . -B build
 
-build:
-	@echo "Building all Qt Arkanoid projects..."
-	mkdir -p build
-	cd build && cmake .. && make
+build: configure
+	cmake --build build
 
-step0:
-	@echo "Building step0 projects..."
-	mkdir -p build
-	cd build && cmake .. && make hello-world widgets-signals qml-hello
-
-hello-world: build
-widgets-signals: build
-arkanoid: build
-qml-hello: build
+run: build
+	./build/qt-arkanoid
 
 clean:
-	rm -rf build/
+	rm -rf build

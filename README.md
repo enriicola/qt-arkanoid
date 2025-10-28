@@ -2,12 +2,6 @@
 
 A step-by-step project to learn Qt by building the classic Arkanoid/Breakout game. Each step introduces new Qt concepts while building towards a complete game.
 
-## Project Structure
-
-```text
-TODO: tree output here
-```
-
 ## core ideas to learn
 
 - [ ] signals and slots
