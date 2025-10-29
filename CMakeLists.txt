@@ -12,8 +12,11 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 # Step 1.3 - Create executable with main.cpp
+# Step 2 - Add Game class files
 add_executable(qt-arkanoid
     src/main.cpp
+    src/Game.h
+    src/Game.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE

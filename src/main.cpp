@@ -1,14 +1,13 @@
 #include <QApplication>
-#include <QWidget>
+#include "Game.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QWidget window;
-    window.setWindowTitle("Qt Arkanoid - Step 1");
-    window.resize(800, 600);
-    window.show();
+    // Step 2 - Use custom Game class instead of QWidget
+    Game game;
+    game.show();
 
     return app.exec();
 }

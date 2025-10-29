@@ -37,18 +37,18 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 1.3 - Write minimal `main.cpp` with QApplication
   - [x] 1.4 - Create empty window that shows and closes
   - [x] 1.5 - Test build system works
-- [ ] step 2 - Custom Game Window Class
-  - [ ] 2.1 - Create `Game` class inheriting from `QMainWindow`
-  - [ ] 2.2 - Set fixed window size (800x600)
-  - [ ] 2.3 - Set window title "Qt Arkanoid"
-  - [ ] 2.4 - Disable window resizing
-  - [ ] 2.5 - Center window on screen
-- [ ] step 3 - Basic Menu System
-  - [ ] 3.1 - Add menu bar with "Game" and "Help" menus
-  - [ ] 3.2 - Create "New Game", "Pause", "Exit" actions
-  - [ ] 3.3 - Connect "Exit" to `QApplication::quit()` using signals/slots
-  - [ ] 3.4 - Add "About Qt" dialog in Help menu
-  - [ ] 3.5 - Test all menu interactions work
+- [x] step 2 - Custom Game Window Class
+  - [x] 2.1 - Create `Game` class inheriting from `QMainWindow`
+  - [x] 2.2 - Set fixed window size (800x600)
+  - [x] 2.3 - Set window title "Qt Arkanoid"
+  - [x] 2.4 - Disable window resizing
+  - [x] 2.5 - Center window on screen
+- [x] step 3 - Basic Menu System
+  - [x] 3.1 - Add menu bar with "Game" and "Help" menus
+  - [x] 3.2 - Create "New Game", "Pause", "Exit" actions
+  - [x] 3.3 - Connect "Exit" to `QApplication::quit()` using signals/slots
+  - [x] 3.4 - Add "About Qt" dialog in Help menu
+  - [x] 3.5 - Test all menu interactions work
 - [ ] step 4 - Custom Paint Widget (Game Scene)
   - [ ] 4.1 - Create `GameScene` class inheriting from `QWidget`
   - [ ] 4.2 - Override `paintEvent()` to draw game background
