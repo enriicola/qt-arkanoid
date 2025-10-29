@@ -55,12 +55,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 4.3 - Draw a simple grid or background pattern
   - [x] 4.4 - Set this widget as central widget in Game window
   - [x] 4.5 - Experiment with different QPainter drawing commands
-- [ ] step 5 - Game Coordinate System
-  - [ ] 5.1 - Define game world coordinates (e.g., 0-800 x 0-600)
-  - [ ] 5.2 - Create helper functions to convert between screen/game coordinates
-  - [ ] 5.3 - Draw coordinate system guides (origin, axes)
-  - [ ] 5.4 - Add game boundaries visualization
-  - [ ] 5.5 - Test coordinate system with mouse clicks (show coordinates)
+- [x] step 5 - Game Coordinate System
+  - [x] 5.1 - Define game world coordinates (e.g., 0-800 x 0-600)
+  - [x] 5.2 - Create helper functions to convert between screen/game coordinates
+  - [x] 5.3 - Draw coordinate system guides (origin, axes)
+  - [x] 5.4 - Add game boundaries visualization
+  - [x] 5.5 - Test coordinate system with mouse clicks (show coordinates)
 - [ ] step 6 - Paddle Object
   - [ ] 6.1 - Create `Paddle` class with position, size, and speed
   - [ ] 6.2 - Draw paddle as rectangle in GameScene
