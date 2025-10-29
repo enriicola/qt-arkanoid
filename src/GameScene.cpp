@@ -2,18 +2,24 @@
 #include "Paddle.h"
 #include "Ball.h"
 #include "Brick.h"
+#include "PowerUp.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QKeyEvent>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 GameScene::GameScene(QWidget *parent)
     : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0), 
       m_gameState(GameState::Playing), m_lives(STARTING_LIVES), m_level(1),
-      m_invulnerable(false), m_invulnerabilityTimer(0.0)
+      m_invulnerable(false), m_invulnerabilityTimer(0.0),
+      m_paddleSizeTimer(0.0), m_ballSpeedTimer(0.0), m_powerUpTextTimer(0.0)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
+    
+    std::srand(std::time(nullptr));
     
     m_paddle = std::make_unique<Paddle>(350.0, 550.0, 100.0, 15.0);
     m_ball = std::make_unique<Ball>(400.0, 300.0, 8.0);
@@ -52,7 +58,9 @@ void GameScene::paintEvent(QPaintEvent *event)
     drawBricks(painter);
     drawPaddle(painter);
     drawBall(painter);
+    drawPowerUps(painter);
     drawHUD(painter);
+    drawActivePowerUps(painter);
     drawFPS(painter);
     
     if (m_paused) {
@@ -124,12 +132,18 @@ void GameScene::restartGame()
     m_level = 1;
     m_invulnerable = false;
     m_invulnerabilityTimer = 0.0;
+    m_paddleSizeTimer = 0.0;
+    m_ballSpeedTimer = 0.0;
+    m_powerUpTextTimer = 0.0;
     
     m_paddle->setPosition(350.0, 550.0);
+    m_paddle->setWidth(100.0);
     resetBall();
     
     m_bricks.clear();
     createBricks();
+    
+    m_powerUps.clear();
 }
 
 void GameScene::resetBall()
@@ -162,6 +176,32 @@ void GameScene::updateGame(qreal delta)
         }
     }
     
+    if (m_paddleSizeTimer > 0.0) {
+        m_paddleSizeTimer -= delta;
+        if (m_paddleSizeTimer <= 0.0) {
+            m_paddle->setWidth(100.0);
+            m_paddleSizeTimer = 0.0;
+        }
+    }
+    
+    if (m_ballSpeedTimer > 0.0) {
+        m_ballSpeedTimer -= delta;
+        if (m_ballSpeedTimer <= 0.0) {
+            QPointF vel = m_ball->velocity();
+            qreal currentSpeed = std::sqrt(vel.x() * vel.x() + vel.y() * vel.y());
+            qreal normalSpeed = 300.0;
+            if (currentSpeed > 0.0) {
+                qreal scale = normalSpeed / currentSpeed;
+                m_ball->setVelocity(vel.x() * scale, vel.y() * scale);
+            }
+            m_ballSpeedTimer = 0.0;
+        }
+    }
+    
+    if (m_powerUpTextTimer > 0.0) {
+        m_powerUpTextTimer -= delta;
+    }
+    
     if (m_pressedKeys.contains(Qt::Key_A) || m_pressedKeys.contains(Qt::Key_Left)) {
         m_paddle->moveLeft(delta);
     }
@@ -174,10 +214,20 @@ void GameScene::updateGame(qreal delta)
     m_ball->move(delta);
     m_ball->checkBoundaryCollision(0, GAME_WIDTH, 0, GAME_HEIGHT);
     
+    for (auto &powerUp : m_powerUps) {
+        if (powerUp->isActive()) {
+            powerUp->move(delta);
+            if (powerUp->rect().top() > GAME_HEIGHT) {
+                powerUp->setActive(false);
+            }
+        }
+    }
+    
     if (!m_invulnerable) {
         checkBallPaddleCollision();
     }
     checkBallBrickCollisions();
+    checkPowerUpCollisions();
 }
 
 void GameScene::checkGameState()
@@ -241,6 +291,8 @@ void GameScene::checkBallBrickCollisions()
             
             brick->destroy();
             m_score += 10;
+            
+            spawnPowerUp(brickRect.center().x(), brickRect.center().y());
             
             qreal brickCenterX = brickRect.center().x();
             qreal brickCenterY = brickRect.center().y();
@@ -452,4 +504,120 @@ void GameScene::drawVictoryOverlay(QPainter &painter)
     painter.setFont(QFont("Arial", 16));
     textRect.translate(0, 40);
     painter.drawText(textRect, Qt::AlignCenter, "Press R to play again");
+}
+
+void GameScene::spawnPowerUp(qreal x, qreal y)
+{
+    if (std::rand() % 100 < 20) {
+        PowerUpType type = static_cast<PowerUpType>(std::rand() % 5);
+        m_powerUps.push_back(std::make_unique<PowerUp>(x, y, type));
+    }
+}
+
+void GameScene::checkPowerUpCollisions()
+{
+    QRectF paddleRect = m_paddle->rect();
+    
+    for (auto &powerUp : m_powerUps) {
+        if (!powerUp->isActive()) continue;
+        
+        QRectF powerUpRect = powerUp->rect();
+        
+        if (paddleRect.intersects(powerUpRect)) {
+            applyPowerUp(powerUp->type());
+            powerUp->setActive(false);
+        }
+    }
+}
+
+void GameScene::applyPowerUp(PowerUpType type)
+{
+    const qreal DURATION = 10.0;
+    
+    switch (type) {
+        case PowerUpType::BiggerPaddle:
+            if (m_paddleSizeTimer <= 0.0) {
+                m_paddle->setWidth(m_paddle->width() * 1.5);
+            }
+            m_paddleSizeTimer = DURATION;
+            m_activePowerUpText = "Bigger Paddle!";
+            m_powerUpTextTimer = 2.0;
+            break;
+            
+        case PowerUpType::SmallerPaddle:
+            if (m_paddleSizeTimer <= 0.0) {
+                m_paddle->setWidth(m_paddle->width() * 0.6);
+            }
+            m_paddleSizeTimer = DURATION;
+            m_activePowerUpText = "Smaller Paddle!";
+            m_powerUpTextTimer = 2.0;
+            break;
+            
+        case PowerUpType::SlowBall:
+            if (m_ballSpeedTimer <= 0.0) {
+                QPointF vel = m_ball->velocity();
+                m_ball->setVelocity(vel.x() * 0.7, vel.y() * 0.7);
+            }
+            m_ballSpeedTimer = DURATION;
+            m_activePowerUpText = "Slow Ball!";
+            m_powerUpTextTimer = 2.0;
+            break;
+            
+        case PowerUpType::FastBall:
+            if (m_ballSpeedTimer <= 0.0) {
+                QPointF vel = m_ball->velocity();
+                m_ball->setVelocity(vel.x() * 1.5, vel.y() * 1.5);
+            }
+            m_ballSpeedTimer = DURATION;
+            m_activePowerUpText = "Fast Ball!";
+            m_powerUpTextTimer = 2.0;
+            break;
+            
+        case PowerUpType::ExtraLife:
+            m_lives++;
+            m_activePowerUpText = "Extra Life!";
+            m_powerUpTextTimer = 2.0;
+            break;
+    }
+}
+
+void GameScene::drawPowerUps(QPainter &painter)
+{
+    painter.setRenderHint(QPainter::Antialiasing);
+    
+    for (const auto &powerUp : m_powerUps) {
+        if (!powerUp->isActive()) continue;
+        
+        QRectF powerUpRect = powerUp->rect();
+        QPoint screenPos = gameToScreen(powerUpRect.topLeft());
+        QPoint screenBottomRight = gameToScreen(powerUpRect.bottomRight());
+        QRectF screenRect(screenPos, screenBottomRight);
+        
+        QLinearGradient gradient(screenRect.topLeft(), screenRect.bottomLeft());
+        QColor color = powerUp->color();
+        gradient.setColorAt(0, color.lighter(130));
+        gradient.setColorAt(1, color);
+        
+        painter.setBrush(gradient);
+        painter.setPen(QPen(color.darker(150), 2));
+        painter.drawRoundedRect(screenRect, 4, 4);
+        
+        painter.setPen(Qt::white);
+        painter.setFont(QFont("Arial", 8, QFont::Bold));
+        painter.drawText(screenRect, Qt::AlignCenter, powerUp->name().at(0));
+    }
+}
+
+void GameScene::drawActivePowerUps(QPainter &painter)
+{
+    if (m_powerUpTextTimer > 0.0) {
+        painter.setPen(QColor(255, 255, 100));
+        painter.setFont(QFont("Arial", 20, QFont::Bold));
+        
+        QRect textRect = rect();
+        textRect.setTop(height() / 2 - 50);
+        textRect.setHeight(50);
+        
+        painter.drawText(textRect, Qt::AlignCenter, m_activePowerUpText);
+    }
 }

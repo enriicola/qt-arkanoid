@@ -11,6 +11,7 @@
 #include "Paddle.h"
 #include "Ball.h"
 #include "Brick.h"
+#include "PowerUp.h"
 
 enum class GameState {
     Menu,
@@ -55,14 +56,19 @@ private:
     void drawGameOverOverlay(QPainter &painter);
     void drawVictoryOverlay(QPainter &painter);
     void drawHUD(QPainter &painter);
+    void drawPowerUps(QPainter &painter);
+    void drawActivePowerUps(QPainter &painter);
     
     void updateGame(qreal delta);
     void checkBallPaddleCollision();
     void checkBallBrickCollisions();
+    void checkPowerUpCollisions();
     void checkGameState();
     void createBricks();
     void resetBall();
     void loseLife();
+    void applyPowerUp(PowerUpType type);
+    void spawnPowerUp(qreal x, qreal y);
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
@@ -75,6 +81,7 @@ private:
     std::unique_ptr<Paddle> m_paddle;
     std::unique_ptr<Ball> m_ball;
     std::vector<std::unique_ptr<Brick>> m_bricks;
+    std::vector<std::unique_ptr<PowerUp>> m_powerUps;
     
     QTimer m_gameTimer;
     QElapsedTimer m_elapsedTimer;
@@ -90,6 +97,11 @@ private:
     int m_level;
     bool m_invulnerable;
     qreal m_invulnerabilityTimer;
+    
+    qreal m_paddleSizeTimer;
+    qreal m_ballSpeedTimer;
+    QString m_activePowerUpText;
+    qreal m_powerUpTextTimer;
 };
 
 #endif

@@ -20,6 +20,11 @@ void Paddle::setPosition(qreal x, qreal y)
     m_position = QPointF(x, y);
 }
 
+void Paddle::setWidth(qreal width)
+{
+    m_width = width;
+}
+
 void Paddle::constrainToBounds(qreal minX, qreal maxX)
 {
     if (m_position.x() < minX) {

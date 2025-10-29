@@ -12,6 +12,7 @@ public:
     void moveLeft(qreal delta);
     void moveRight(qreal delta);
     void setPosition(qreal x, qreal y);
+    void setWidth(qreal width);
     void constrainToBounds(qreal minX, qreal maxX);
 
     QRectF rect() const;

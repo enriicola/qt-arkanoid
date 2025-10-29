@@ -110,12 +110,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 13.3 - Add brief invulnerability period after losing life
   - [x] 13.4 - Visual feedback for life loss
   - [x] 13.5 - Game over when no lives remaining
-- [ ] step 14 - Power-ups System
-  - [ ] 14.1 - Create `PowerUp` base class
-  - [ ] 14.2 - Implement different power-up types (bigger paddle, multi-ball, etc.)
-  - [ ] 14.3 - Random power-up drops from destroyed bricks
-  - [ ] 14.4 - Power-up collection and effects
-  - [ ] 14.5 - Visual effects for active power-ups
+- [x] step 14 - Power-ups System
+  - [x] 14.1 - Create `PowerUp` base class
+  - [x] 14.2 - Implement different power-up types (bigger paddle, multi-ball, etc.)
+  - [x] 14.3 - Random power-up drops from destroyed bricks
+  - [x] 14.4 - Power-up collection and effects
+  - [x] 14.5 - Visual effects for active power-ups
 - [ ] step 15 - Sound System
   - [ ] 15.1 - Create `SoundManager` class
   - [ ] 15.2 - Add sound effects (ball hit, brick break, power-up, etc.)

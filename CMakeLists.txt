@@ -22,6 +22,8 @@ add_executable(qt-arkanoid
     src/Ball.cpp
     src/Brick.h
     src/Brick.cpp
+    src/PowerUp.h
+    src/PowerUp.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE
