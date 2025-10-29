@@ -161,7 +161,6 @@ void GameScene::restartGame()
     m_paddle->setWidth(100.0);
     resetBall();
     
-    // Reset to first level
     if (m_levelManager) {
         m_levelManager->resetToLevel(1);
     }
@@ -650,7 +649,7 @@ void GameScene::drawLevelTransitionOverlay(QPainter &painter)
         painter.setFont(QFont("Arial", 16));
         textRect.translate(0, 40);
         painter.drawText(textRect, Qt::AlignCenter, 
-                        QString("Get ready... %.1f").arg(m_levelTransitionTimer));
+                        QString("Get ready... %1").arg(m_levelTransitionTimer, 0, 'f', 1));
     }
 }
 
