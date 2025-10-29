@@ -128,12 +128,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 16.3 - Ball trail effect
   - [x] 16.4 - Screen shake for big impacts
   - [x] 16.5 - Brick destruction animations
-- [ ] step 17 - Settings & Configuration
-  - [ ] 17.1 - Create settings dialog for controls, audio, graphics
-  - [ ] 17.2 - Save/load settings using `QSettings`
-  - [ ] 17.3 - Implement high score system with persistent storage
-  - [ ] 17.4 - Add level editor (bonus!)
-  - [ ] 17.5 - Customizable controls
+- [x] step 17 - Settings & Configuration
+  - [x] 17.1 - Create settings dialog for controls, audio, graphics
+  - [x] 17.2 - Save/load settings using `QSettings`
+  - [x] 17.3 - Implement high score system with persistent storage
+  - [x] 17.4 - Add level editor (bonus!)
+  - [x] 17.5 - Customizable controls
 - [ ] step 18 - Multiple Levels
   - [ ] 18.1 - Design level data format (JSON or custom)
   - [ ] 18.2 - Create multiple brick layouts

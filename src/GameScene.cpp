@@ -5,9 +5,11 @@
 #include "PowerUp.h"
 #include "SoundManager.h"
 #include "Particle.h"
+#include "HighScoreManager.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QKeyEvent>
+#include <QInputDialog>
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
@@ -17,7 +19,8 @@ GameScene::GameScene(QWidget *parent)
       m_gameState(GameState::Playing), m_lives(STARTING_LIVES), m_level(1),
       m_invulnerable(false), m_invulnerabilityTimer(0.0),
       m_paddleSizeTimer(0.0), m_ballSpeedTimer(0.0), m_powerUpTextTimer(0.0),
-      m_screenShakeAmount(0.0), m_screenShakeDuration(0.0)
+      m_screenShakeAmount(0.0), m_screenShakeDuration(0.0),
+      m_highScoreManager(nullptr)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -182,6 +185,7 @@ void GameScene::loseLife()
     if (m_lives <= 0) {
         m_gameState = GameState::GameOver;
         m_soundManager->playSound(SoundManager::Sound::GameOver);
+        checkForHighScore();
     } else {
         m_paddle->setPosition(350.0, 550.0);
         resetBall();
@@ -289,6 +293,7 @@ void GameScene::checkGameState()
     if (allBricksDestroyed) {
         m_gameState = GameState::Victory;
         m_soundManager->playSound(SoundManager::Sound::Victory);
+        checkForHighScore();
     }
 }
 
@@ -739,6 +744,43 @@ void GameScene::updateScreenShake(qreal delta)
         } else {
             m_screenShakeOffset = QPointF(0, 0);
             m_screenShakeDuration = 0.0;
+        }
+    }
+}
+
+void GameScene::setHighScoreManager(HighScoreManager *manager)
+{
+    m_highScoreManager = manager;
+}
+
+void GameScene::applySoundSettings(bool soundEnabled, bool musicEnabled, 
+                                   float soundVolume, float musicVolume)
+{
+    if (m_soundManager) {
+        m_soundManager->setSoundEnabled(soundEnabled);
+        m_soundManager->setMusicEnabled(musicEnabled);
+        m_soundManager->setSoundVolume(soundVolume);
+        m_soundManager->setMusicVolume(musicVolume);
+    }
+}
+
+void GameScene::checkForHighScore()
+{
+    if (!m_highScoreManager) return;
+    
+    if (m_highScoreManager->isHighScore(m_score)) {
+        bool ok;
+        QString name = QInputDialog::getText(
+            this,
+            "High Score!",
+            QString("Congratulations! You achieved a high score of %1!\nEnter your name:").arg(m_score),
+            QLineEdit::Normal,
+            "Player",
+            &ok
+        );
+        
+        if (ok && !name.isEmpty()) {
+            m_highScoreManager->addHighScore(name, m_score);
         }
     }
 }

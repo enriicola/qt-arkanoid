@@ -5,6 +5,8 @@
 
 class QAction;
 class GameScene;
+class SettingsDialog;
+class HighScoreManager;
 
 class Game : public QMainWindow
 {
@@ -19,17 +21,25 @@ private:
     void centerWindow();
     void createMenus();
     void createActions();
+    void applySettings();
 
 private slots:
     void onNewGame();
     void onPause();
+    void onSettings();
+    void onHighScores();
+    void onSettingsChanged();
 
 private:
     QAction *newGameAction;
     QAction *pauseAction;
+    QAction *settingsAction;
+    QAction *highScoresAction;
     QAction *exitAction;
     QAction *aboutQtAction;
     GameScene *gameScene;
+    SettingsDialog *settingsDialog;
+    HighScoreManager *highScoreManager;
 };
 
 #endif

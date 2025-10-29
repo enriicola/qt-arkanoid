@@ -15,6 +15,8 @@
 #include "SoundManager.h"
 #include "Particle.h"
 
+class HighScoreManager;
+
 enum class GameState {
     Menu,
     Playing,
@@ -38,6 +40,10 @@ public:
     void startNewGame();
     void restartGame();
     GameState gameState() const { return m_gameState; }
+    
+    void setHighScoreManager(HighScoreManager *manager);
+    void applySoundSettings(bool soundEnabled, bool musicEnabled, 
+                           float soundVolume, float musicVolume);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -75,6 +81,7 @@ private:
     void spawnPowerUp(qreal x, qreal y);
     void spawnParticles(qreal x, qreal y, const QColor &color, int count);
     void updateScreenShake(qreal delta);
+    void checkForHighScore();
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
@@ -91,6 +98,7 @@ private:
     std::unique_ptr<SoundManager> m_soundManager;
     std::vector<Particle> m_particles;
     std::vector<QPointF> m_ballTrail;
+    HighScoreManager *m_highScoreManager;
     
     QTimer m_gameTimer;
     QElapsedTimer m_elapsedTimer;

@@ -28,6 +28,12 @@ add_executable(qt-arkanoid
     src/SoundManager.cpp
     src/Particle.h
     src/Particle.cpp
+    src/SettingsDialog.h
+    src/SettingsDialog.cpp
+    src/HighScoreManager.h
+    src/HighScoreManager.cpp
+    src/HighScoreDialog.h
+    src/HighScoreDialog.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE

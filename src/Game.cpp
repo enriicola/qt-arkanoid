@@ -1,5 +1,8 @@
 #include "Game.h"
 #include "GameScene.h"
+#include "SettingsDialog.h"
+#include "HighScoreManager.h"
+#include "HighScoreDialog.h"
 #include <QScreen>
 #include <QGuiApplication>
 #include <QMenuBar>
@@ -7,17 +10,24 @@
 #include <QAction>
 #include <QApplication>
 #include <QMessageBox>
+#include <QInputDialog>
 
 Game::Game(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), settingsDialog(nullptr)
 {
     setupWindow();
     centerWindow();
+    
+    highScoreManager = new HighScoreManager(this);
+    
     createActions();
     createMenus();
     
     gameScene = new GameScene(this);
+    gameScene->setHighScoreManager(highScoreManager);
     setCentralWidget(gameScene);
+    
+    applySettings();
 }
 
 Game::~Game()
@@ -50,6 +60,14 @@ void Game::createActions()
     pauseAction = new QAction(tr("&Pause"), this);
     pauseAction->setShortcut(tr("Ctrl+P"));
     connect(pauseAction, &QAction::triggered, this, &Game::onPause);
+    
+    settingsAction = new QAction(tr("&Settings"), this);
+    settingsAction->setShortcut(tr("Ctrl+S"));
+    connect(settingsAction, &QAction::triggered, this, &Game::onSettings);
+    
+    highScoresAction = new QAction(tr("&High Scores"), this);
+    highScoresAction->setShortcut(tr("Ctrl+H"));
+    connect(highScoresAction, &QAction::triggered, this, &Game::onHighScores);
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcut(tr("Ctrl+Q"));
@@ -64,6 +82,9 @@ void Game::createMenus()
     QMenu *gameMenu = menuBar()->addMenu(tr("&Game"));
     gameMenu->addAction(newGameAction);
     gameMenu->addAction(pauseAction);
+    gameMenu->addSeparator();
+    gameMenu->addAction(highScoresAction);
+    gameMenu->addAction(settingsAction);
     gameMenu->addSeparator();
     gameMenu->addAction(exitAction);
 
@@ -82,5 +103,44 @@ void Game::onPause()
 {
     if (gameScene) {
         gameScene->togglePause();
+    }
+}
+
+void Game::onSettings()
+{
+    if (!settingsDialog) {
+        settingsDialog = new SettingsDialog(this);
+        connect(settingsDialog, &SettingsDialog::settingsChanged,
+                this, &Game::onSettingsChanged);
+    }
+    settingsDialog->exec();
+}
+
+void Game::onHighScores()
+{
+    HighScoreDialog dialog(highScoreManager, this);
+    dialog.exec();
+}
+
+void Game::onSettingsChanged()
+{
+    applySettings();
+}
+
+void Game::applySettings()
+{
+    if (!settingsDialog) {
+        settingsDialog = new SettingsDialog(this);
+        connect(settingsDialog, &SettingsDialog::settingsChanged,
+                this, &Game::onSettingsChanged);
+    }
+    
+    if (gameScene) {
+        gameScene->applySoundSettings(
+            settingsDialog->isSoundEnabled(),
+            settingsDialog->isMusicEnabled(),
+            settingsDialog->soundVolume() / 100.0f,
+            settingsDialog->musicVolume() / 100.0f
+        );
     }
 }
