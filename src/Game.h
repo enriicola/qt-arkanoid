@@ -7,6 +7,7 @@ class QAction;
 class GameScene;
 class SettingsDialog;
 class HighScoreManager;
+class LevelManager;
 
 class Game : public QMainWindow
 {
@@ -40,6 +41,7 @@ private:
     GameScene *gameScene;
     SettingsDialog *settingsDialog;
     HighScoreManager *highScoreManager;
+    LevelManager *levelManager;
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "SoundManager.h"
 #include "Particle.h"
 #include "HighScoreManager.h"
+#include "LevelManager.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QKeyEvent>
@@ -20,7 +21,8 @@ GameScene::GameScene(QWidget *parent)
       m_invulnerable(false), m_invulnerabilityTimer(0.0),
       m_paddleSizeTimer(0.0), m_ballSpeedTimer(0.0), m_powerUpTextTimer(0.0),
       m_screenShakeAmount(0.0), m_screenShakeDuration(0.0),
-      m_highScoreManager(nullptr)
+      m_highScoreManager(nullptr), m_levelManager(nullptr),
+      m_levelComplete(false), m_levelTransitionTimer(0.0)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -76,11 +78,14 @@ void GameScene::paintEvent(QPaintEvent *event)
     drawBall(painter);
     drawPowerUps(painter);
     drawHUD(painter);
+    drawLevelInfo(painter);
     drawActivePowerUps(painter);
     drawFPS(painter);
     
     if (m_paused) {
         drawPauseOverlay(painter);
+    } else if (m_levelComplete && m_levelTransitionTimer > 0.0) {
+        drawLevelTransitionOverlay(painter);
     } else if (m_gameState == GameState::GameOver) {
         drawGameOverOverlay(painter);
     } else if (m_gameState == GameState::Victory) {
@@ -156,8 +161,36 @@ void GameScene::restartGame()
     m_paddle->setWidth(100.0);
     resetBall();
     
+    // Reset to first level
+    if (m_levelManager) {
+        m_levelManager->resetToLevel(1);
+    }
+    
     m_bricks.clear();
-    createBricks();
+    loadCurrentLevel();
+    
+    m_powerUps.clear();
+    m_particles.clear();
+    m_ballTrail.clear();
+    m_screenShakeAmount = 0.0;
+    m_screenShakeDuration = 0.0;
+    m_screenShakeOffset = QPointF(0, 0);
+}
+
+void GameScene::resetGame()
+{
+    // Reset game state but keep score and level
+    m_paused = false;
+    m_gameState = GameState::Playing;
+    m_invulnerable = false;
+    m_invulnerabilityTimer = 0.0;
+    m_paddleSizeTimer = 0.0;
+    m_ballSpeedTimer = 0.0;
+    m_powerUpTextTimer = 0.0;
+    
+    m_paddle->setPosition(350.0, 550.0);
+    m_paddle->setWidth(100.0);
+    resetBall();
     
     m_powerUps.clear();
     m_particles.clear();
@@ -196,6 +229,19 @@ void GameScene::loseLife()
 
 void GameScene::updateGame(qreal delta)
 {
+    // Handle level transition
+    if (m_levelComplete && m_levelTransitionTimer > 0.0) {
+        m_levelTransitionTimer -= delta;
+        if (m_levelTransitionTimer <= 0.0) {
+            // Move to next level
+            if (m_levelManager && m_levelManager->nextLevel()) {
+                loadCurrentLevel();
+                resetGame();
+            }
+        }
+        return; // Don't update game during transition
+    }
+    
     if (m_invulnerable) {
         m_invulnerabilityTimer -= delta;
         if (m_invulnerabilityTimer <= 0.0) {
@@ -290,10 +336,16 @@ void GameScene::checkGameState()
         }
     }
     
-    if (allBricksDestroyed) {
-        m_gameState = GameState::Victory;
-        m_soundManager->playSound(SoundManager::Sound::Victory);
-        checkForHighScore();
+    if (allBricksDestroyed && !m_levelComplete) {
+        // Check if there's a next level
+        if (m_levelManager && m_levelManager->hasNextLevel()) {
+            completeLevel();
+        } else {
+            // No more levels - game won
+            m_gameState = GameState::Victory;
+            m_soundManager->playSound(SoundManager::Sound::Victory);
+            checkForHighScore();
+        }
     }
 }
 
@@ -338,18 +390,22 @@ void GameScene::checkBallBrickCollisions()
             ballPos.y() + ballRadius >= brickRect.top() &&
             ballPos.y() - ballRadius <= brickRect.bottom()) {
             
-            brick->destroy();
-            m_score += 10;
+            bool destroyed = brick->hit();
+            m_score += destroyed ? 10 : 5;  // Less points for just damaging
             m_soundManager->playSound(SoundManager::Sound::BrickBreak);
             
-            // Spawn particles for brick destruction
-            spawnParticles(brickRect.center().x(), brickRect.center().y(), brick->color(), 15);
-            
-            // Add screen shake
-            m_screenShakeAmount = 3.0;
-            m_screenShakeDuration = 0.1;
-            
-            spawnPowerUp(brickRect.center().x(), brickRect.center().y());
+            // Spawn particles for brick destruction/damage
+            if (destroyed) {
+                spawnParticles(brickRect.center().x(), brickRect.center().y(), brick->color(), 15);
+                spawnPowerUp(brickRect.center().x(), brickRect.center().y());
+                
+                // Add screen shake
+                m_screenShakeAmount = 3.0;
+                m_screenShakeDuration = 0.1;
+            } else {
+                // Smaller effect for damage
+                spawnParticles(brickRect.center().x(), brickRect.center().y(), brick->color(), 5);
+            }
             
             qreal brickCenterX = brickRect.center().x();
             qreal brickCenterY = brickRect.center().y();
@@ -370,28 +426,30 @@ void GameScene::checkBallBrickCollisions()
 
 void GameScene::createBricks()
 {
-    const int rows = 5;
-    const int cols = 10;
+    m_bricks.clear();
+    
+    if (!m_levelManager) {
+        return;
+    }
+    
+    const Level *level = m_levelManager->getCurrentLevel();
+    if (!level) {
+        return;
+    }
+    
     const qreal brickWidth = 70.0;
     const qreal brickHeight = 25.0;
     const qreal padding = 5.0;
-    const qreal offsetX = (GAME_WIDTH - (cols * (brickWidth + padding) - padding)) / 2.0;
+    const int maxCols = 10;
+    const qreal offsetX = (GAME_WIDTH - (maxCols * (brickWidth + padding) - padding)) / 2.0;
     const qreal offsetY = 50.0;
     
-    QColor colors[] = {
-        QColor(255, 100, 100),
-        QColor(255, 180, 100),
-        QColor(255, 255, 100),
-        QColor(100, 255, 100),
-        QColor(100, 100, 255)
-    };
-    
-    for (int row = 0; row < rows; ++row) {
-        for (int col = 0; col < cols; ++col) {
-            qreal x = offsetX + col * (brickWidth + padding);
-            qreal y = offsetY + row * (brickHeight + padding);
-            m_bricks.push_back(std::make_unique<Brick>(x, y, brickWidth, brickHeight, colors[row]));
-        }
+    // Load bricks from level data
+    for (const auto &brickData : level->bricks()) {
+        qreal x = offsetX + brickData.col * (brickWidth + padding);
+        qreal y = offsetY + brickData.row * (brickHeight + padding);
+        m_bricks.push_back(std::make_unique<Brick>(x, y, brickWidth, brickHeight, 
+                                                    brickData.color, brickData.hitPoints));
     }
 }
 
@@ -456,13 +514,20 @@ void GameScene::drawBricks(QPainter &painter)
         QRectF screenRect(screenPos, screenBottomRight);
         
         QLinearGradient gradient(screenRect.topLeft(), screenRect.bottomLeft());
-        QColor color = brick->color();
+        QColor color = brick->currentColor();  // Use currentColor for damage indication
         gradient.setColorAt(0, color.lighter(120));
         gradient.setColorAt(1, color);
         
         painter.setBrush(gradient);
         painter.setPen(QPen(color.darker(150), 2));
         painter.drawRoundedRect(screenRect, 3, 3);
+        
+        // Draw hit points indicator for multi-hit bricks
+        if (brick->maxHitPoints() > 1) {
+            painter.setPen(Qt::white);
+            painter.setFont(QFont("Arial", 10, QFont::Bold));
+            painter.drawText(screenRect, Qt::AlignCenter, QString::number(brick->hitPoints()));
+        }
     }
 }
 
@@ -562,6 +627,33 @@ void GameScene::drawVictoryOverlay(QPainter &painter)
     textRect.translate(0, 40);
     painter.drawText(textRect, Qt::AlignCenter, "Press R to play again");
 }
+
+void GameScene::drawLevelTransitionOverlay(QPainter &painter)
+{
+    painter.fillRect(rect(), QColor(0, 0, 0, 150));
+    
+    painter.setPen(QColor(100, 200, 255));
+    painter.setFont(QFont("Arial", 48, QFont::Bold));
+    painter.drawText(rect(), Qt::AlignCenter, "LEVEL COMPLETE!");
+    
+    if (m_levelManager) {
+        const Level *nextLevel = nullptr;
+        int nextLevelNum = m_levelManager->currentLevelNumber() + 1;
+        
+        // Preview next level info
+        painter.setPen(Qt::white);
+        painter.setFont(QFont("Arial", 24));
+        QRect textRect = rect();
+        textRect.translate(0, 70);
+        painter.drawText(textRect, Qt::AlignCenter, QString("Next Level: %1").arg(nextLevelNum));
+        
+        painter.setFont(QFont("Arial", 16));
+        textRect.translate(0, 40);
+        painter.drawText(textRect, Qt::AlignCenter, 
+                        QString("Get ready... %.1f").arg(m_levelTransitionTimer));
+    }
+}
+
 
 void GameScene::spawnPowerUp(qreal x, qreal y)
 {
@@ -784,3 +876,63 @@ void GameScene::checkForHighScore()
         }
     }
 }
+
+void GameScene::setLevelManager(LevelManager *manager)
+{
+    m_levelManager = manager;
+}
+
+void GameScene::loadCurrentLevel()
+{
+    if (!m_levelManager) {
+        return;
+    }
+    
+    const Level *level = m_levelManager->getCurrentLevel();
+    if (!level) {
+        return;
+    }
+    
+    // TODO: Update ball speed based on level->ballSpeed()
+    
+    // Recreate bricks from level data
+    createBricks();
+    
+    // Reset level state
+    m_levelComplete = false;
+    m_levelTransitionTimer = 0.0;
+}
+
+void GameScene::completeLevel()
+{
+    if (!m_levelManager) {
+        return;
+    }
+    
+    m_levelComplete = true;
+    m_levelTransitionTimer = 3.0; // 3 seconds transition
+    
+    // Unlock next level
+    int nextLevelNum = m_levelManager->currentLevelNumber() + 1;
+    m_levelManager->unlockLevel(nextLevelNum);
+    m_levelManager->saveProgress();
+}
+
+void GameScene::drawLevelInfo(QPainter &painter)
+{
+    if (!m_levelManager) {
+        return;
+    }
+    
+    const Level *level = m_levelManager->getCurrentLevel();
+    if (!level) {
+        return;
+    }
+    
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 12));
+    
+    QString levelText = QString("Level %1: %2").arg(level->levelNumber()).arg(level->name());
+    painter.drawText(10, 25, levelText);
+}
+

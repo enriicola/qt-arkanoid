@@ -134,12 +134,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 17.3 - Implement high score system with persistent storage
   - [x] 17.4 - Add level editor (bonus!)
   - [x] 17.5 - Customizable controls
-- [ ] step 18 - Multiple Levels
-  - [ ] 18.1 - Design level data format (JSON or custom)
-  - [ ] 18.2 - Create multiple brick layouts
-  - [ ] 18.3 - Progressive difficulty (ball speed, brick strength)
-  - [ ] 18.4 - Level transition animations
-  - [ ] 18.5 - Save game progress
+- [x] step 18 - Multiple Levels
+  - [x] 18.1 - Design level data format (JSON or custom)
+  - [x] 18.2 - Create multiple brick layouts
+  - [x] 18.3 - Progressive difficulty (ball speed, brick strength)
+  - [x] 18.4 - Level transition animations
+  - [x] 18.5 - Save game progress
 - [ ] step 19 - Resource Management & Assets
   - [ ] 19.1 - Create `resources.qrc` file for all game assets
   - [ ] 19.2 - Optimize image formats and sizes

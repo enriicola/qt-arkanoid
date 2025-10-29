@@ -34,6 +34,10 @@ add_executable(qt-arkanoid
     src/HighScoreManager.cpp
     src/HighScoreDialog.h
     src/HighScoreDialog.cpp
+    src/Level.h
+    src/Level.cpp
+    src/LevelManager.h
+    src/LevelManager.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE

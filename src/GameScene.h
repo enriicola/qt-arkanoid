@@ -16,6 +16,7 @@
 #include "Particle.h"
 
 class HighScoreManager;
+class LevelManager;
 
 enum class GameState {
     Menu,
@@ -39,9 +40,12 @@ public:
     bool isPaused() const { return m_paused; }
     void startNewGame();
     void restartGame();
+    void resetGame();
     GameState gameState() const { return m_gameState; }
     
     void setHighScoreManager(HighScoreManager *manager);
+    void setLevelManager(LevelManager *manager);
+    void loadCurrentLevel();
     void applySoundSettings(bool soundEnabled, bool musicEnabled, 
                            float soundVolume, float musicVolume);
 
@@ -63,6 +67,7 @@ private:
     void drawPauseOverlay(QPainter &painter);
     void drawGameOverOverlay(QPainter &painter);
     void drawVictoryOverlay(QPainter &painter);
+    void drawLevelTransitionOverlay(QPainter &painter);
     void drawHUD(QPainter &painter);
     void drawPowerUps(QPainter &painter);
     void drawActivePowerUps(QPainter &painter);
@@ -82,6 +87,8 @@ private:
     void spawnParticles(qreal x, qreal y, const QColor &color, int count);
     void updateScreenShake(qreal delta);
     void checkForHighScore();
+    void completeLevel();
+    void drawLevelInfo(QPainter &painter);
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
@@ -99,6 +106,7 @@ private:
     std::vector<Particle> m_particles;
     std::vector<QPointF> m_ballTrail;
     HighScoreManager *m_highScoreManager;
+    LevelManager *m_levelManager;
     
     QTimer m_gameTimer;
     QElapsedTimer m_elapsedTimer;
@@ -123,6 +131,9 @@ private:
     qreal m_screenShakeAmount;
     qreal m_screenShakeDuration;
     QPointF m_screenShakeOffset;
+    
+    bool m_levelComplete;
+    qreal m_levelTransitionTimer;
 };
 
 #endif

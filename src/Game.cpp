@@ -3,6 +3,7 @@
 #include "SettingsDialog.h"
 #include "HighScoreManager.h"
 #include "HighScoreDialog.h"
+#include "LevelManager.h"
 #include <QScreen>
 #include <QGuiApplication>
 #include <QMenuBar>
@@ -19,12 +20,16 @@ Game::Game(QWidget *parent)
     centerWindow();
     
     highScoreManager = new HighScoreManager(this);
+    levelManager = new LevelManager(this);
+    levelManager->createDefaultLevels();
     
     createActions();
     createMenus();
     
     gameScene = new GameScene(this);
     gameScene->setHighScoreManager(highScoreManager);
+    gameScene->setLevelManager(levelManager);
+    gameScene->loadCurrentLevel();
     setCentralWidget(gameScene);
     
     applySettings();
