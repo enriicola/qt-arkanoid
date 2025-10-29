@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class QAction;
+class GameScene;
 
 class Game : public QMainWindow
 {
@@ -28,6 +29,7 @@ private:
     QAction *pauseAction;
     QAction *exitAction;
     QAction *aboutQtAction;
+    GameScene *gameScene;
 };
 
 #endif

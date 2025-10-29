@@ -49,12 +49,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 3.3 - Connect "Exit" to `QApplication::quit()` using signals/slots
   - [x] 3.4 - Add "About Qt" dialog in Help menu
   - [x] 3.5 - Test all menu interactions work
-- [ ] step 4 - Custom Paint Widget (Game Scene)
-  - [ ] 4.1 - Create `GameScene` class inheriting from `QWidget`
-  - [ ] 4.2 - Override `paintEvent()` to draw game background
-  - [ ] 4.3 - Draw a simple grid or background pattern
-  - [ ] 4.4 - Set this widget as central widget in Game window
-  - [ ] 4.5 - Experiment with different QPainter drawing commands
+- [x] step 4 - Custom Paint Widget (Game Scene)
+  - [x] 4.1 - Create `GameScene` class inheriting from `QWidget`
+  - [x] 4.2 - Override `paintEvent()` to draw game background
+  - [x] 4.3 - Draw a simple grid or background pattern
+  - [x] 4.4 - Set this widget as central widget in Game window
+  - [x] 4.5 - Experiment with different QPainter drawing commands
 - [ ] step 5 - Game Coordinate System
   - [ ] 5.1 - Define game world coordinates (e.g., 0-800 x 0-600)
   - [ ] 5.2 - Create helper functions to convert between screen/game coordinates

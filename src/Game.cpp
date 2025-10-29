@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "GameScene.h"
 #include <QScreen>
 #include <QGuiApplication>
 #include <QMenuBar>
@@ -14,6 +15,9 @@ Game::Game(QWidget *parent)
     centerWindow();
     createActions();
     createMenus();
+    
+    gameScene = new GameScene(this);
+    setCentralWidget(gameScene);
 }
 
 Game::~Game()
