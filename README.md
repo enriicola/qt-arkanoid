@@ -86,12 +86,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 9.4 - Implement ball-brick collision detection
   - [x] 9.5 - Remove bricks when hit, update score
   - [x] 9.6 - Test brick destruction and collision
-- [ ] step 10 - Game Loop & Timing
-  - [ ] 10.1 - Implement game loop using `QTimer`
-  - [ ] 10.2 - Set consistent frame rate (60 FPS)
-  - [ ] 10.3 - Add delta time for frame-independent movement
-  - [ ] 10.4 - Implement pause/resume functionality
-  - [ ] 10.5 - Add simple FPS counter for debugging
+- [x] step 10 - Game Loop & Timing
+  - [x] 10.1 - Implement game loop using `QTimer`
+  - [x] 10.2 - Set consistent frame rate (60 FPS)
+  - [x] 10.3 - Add delta time for frame-independent movement
+  - [x] 10.4 - Implement pause/resume functionality
+  - [x] 10.5 - Add simple FPS counter for debugging
 - [ ] step 11 - Game States & Logic
   - [ ] 11.1 - Create `GameState` enum (Menu, Playing, Paused, GameOver, Victory)
   - [ ] 11.2 - Implement state transitions and state-specific rendering

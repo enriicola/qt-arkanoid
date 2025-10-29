@@ -79,6 +79,7 @@ void Game::onNewGame()
 
 void Game::onPause()
 {
-    QMessageBox::information(this, tr("Pause"), 
-                            tr("Pause functionality will be implemented later."));
+    if (gameScene) {
+        gameScene->togglePause();
+    }
 }

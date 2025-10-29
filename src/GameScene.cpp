@@ -8,7 +8,7 @@
 #include <cmath>
 
 GameScene::GameScene(QWidget *parent)
-    : QWidget(parent), m_score(0)
+    : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -19,8 +19,9 @@ GameScene::GameScene(QWidget *parent)
     createBricks();
     
     connect(&m_gameTimer, &QTimer::timeout, this, &GameScene::gameLoop);
-    m_gameTimer.start(16);
+    m_gameTimer.start(static_cast<int>(FRAME_TIME));
     m_elapsedTimer.start();
+    m_fpsTimer.start();
 }
 
 QPointF GameScene::screenToGame(const QPoint &screenPos) const
@@ -50,10 +51,18 @@ void GameScene::paintEvent(QPaintEvent *event)
     drawPaddle(painter);
     drawBall(painter);
     drawScore(painter);
+    drawFPS(painter);
+    
+    if (m_paused) {
+        drawPauseOverlay(painter);
+    }
 }
 
 void GameScene::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_P || event->key() == Qt::Key_Space) {
+        togglePause();
+    }
     m_pressedKeys.insert(event->key());
 }
 
@@ -67,8 +76,22 @@ void GameScene::gameLoop()
     qreal delta = m_elapsedTimer.elapsed() / 1000.0;
     m_elapsedTimer.restart();
     
-    updateGame(delta);
+    m_frameCount++;
+    if (m_fpsTimer.elapsed() >= 1000) {
+        m_fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
+        m_frameCount = 0;
+        m_fpsTimer.restart();
+    }
+    
+    if (!m_paused) {
+        updateGame(delta);
+    }
     update();
+}
+
+void GameScene::togglePause()
+{
+    m_paused = !m_paused;
 }
 
 void GameScene::updateGame(qreal delta)
@@ -213,7 +236,7 @@ void GameScene::drawBall(QPainter &painter)
     
     painter.setBrush(gradient);
     painter.setPen(QPen(QColor(150, 150, 255), 2));
-    painter.drawEllipse(screenPos, screenRadius, screenRadius);
+    painter.drawEllipse(screenPos, static_cast<int>(screenRadius), static_cast<int>(screenRadius));
 }
 
 void GameScene::drawBricks(QPainter &painter)
@@ -248,4 +271,25 @@ void GameScene::drawScore(QPainter &painter)
         if (brick->isActive()) activeBricks++;
     }
     painter.drawText(width() - 150, 25, QString("Bricks: %1").arg(activeBricks));
+}
+
+void GameScene::drawFPS(QPainter &painter)
+{
+    painter.setPen(QColor(200, 200, 200));
+    painter.setFont(QFont("Arial", 10));
+    painter.drawText(10, height() - 10, QString("FPS: %1").arg(m_fps, 0, 'f', 1));
+}
+
+void GameScene::drawPauseOverlay(QPainter &painter)
+{
+    painter.fillRect(rect(), QColor(0, 0, 0, 150));
+    
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 48, QFont::Bold));
+    painter.drawText(rect(), Qt::AlignCenter, "PAUSED");
+    
+    painter.setFont(QFont("Arial", 16));
+    QRect textRect = rect();
+    textRect.translate(0, 60);
+    painter.drawText(textRect, Qt::AlignCenter, "Press P or Space to resume");
 }

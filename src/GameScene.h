@@ -21,6 +21,9 @@ public:
 
     QPointF screenToGame(const QPoint &screenPos) const;
     QPoint gameToScreen(const QPointF &gamePos) const;
+    
+    void togglePause();
+    bool isPaused() const { return m_paused; }
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -36,6 +39,8 @@ private:
     void drawBall(QPainter &painter);
     void drawBricks(QPainter &painter);
     void drawScore(QPainter &painter);
+    void drawFPS(QPainter &painter);
+    void drawPauseOverlay(QPainter &painter);
     
     void updateGame(qreal delta);
     void checkBallPaddleCollision();
@@ -45,6 +50,8 @@ private:
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
     static constexpr qreal GAME_HEIGHT = 600.0;
+    static constexpr int TARGET_FPS = 60;
+    static constexpr qreal FRAME_TIME = 1000.0 / TARGET_FPS;
     
     std::unique_ptr<Paddle> m_paddle;
     std::unique_ptr<Ball> m_ball;
@@ -52,9 +59,13 @@ private:
     
     QTimer m_gameTimer;
     QElapsedTimer m_elapsedTimer;
+    QElapsedTimer m_fpsTimer;
     QSet<int> m_pressedKeys;
     
     int m_score;
+    bool m_paused;
+    int m_frameCount;
+    qreal m_fps;
 };
 
 #endif
