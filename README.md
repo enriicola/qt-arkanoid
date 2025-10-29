@@ -61,31 +61,31 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 5.3 - Draw coordinate system guides (origin, axes)
   - [x] 5.4 - Add game boundaries visualization
   - [x] 5.5 - Test coordinate system with mouse clicks (show coordinates)
-- [ ] step 6 - Paddle Object
-  - [ ] 6.1 - Create `Paddle` class with position, size, and speed
-  - [ ] 6.2 - Draw paddle as rectangle in GameScene
-  - [ ] 6.3 - Implement keyboard input handling (A/D or Arrow keys)
-  - [ ] 6.4 - Add smooth paddle movement with boundaries
-  - [ ] 6.5 - Test paddle stays within screen bounds
-- [ ] step 7 - Ball Object & Basic Physics
-  - [ ] 7.1 - Create `Ball` class with position, velocity, and radius
-  - [ ] 7.2 - Implement ball drawing (circle)
-  - [ ] 7.3 - Add ball movement with velocity
-  - [ ] 7.4 - Implement ball-boundary collision (wall bouncing)
-  - [ ] 7.5 - Test ball bounces correctly off walls
-- [ ] step 8 - Ball-Paddle Collision
-  - [ ] 8.1 - Implement ball-paddle collision detection
-  - [ ] 8.2 - Add ball reflection based on paddle hit position
-  - [ ] 8.3 - Add "English" effect (ball angle changes based on where it hits paddle)
-  - [ ] 8.4 - Test various paddle-ball interactions
-  - [ ] 8.5 - Handle edge cases (ball hitting paddle corners)
-- [ ] step 9 - Brick System
-  - [ ] 9.1 - Create `Brick` class with position, size, and state
-  - [ ] 9.2 - Create grid of bricks at top of screen
-  - [ ] 9.3 - Draw all bricks with different colors/patterns
-  - [ ] 9.4 - Implement ball-brick collision detection
-  - [ ] 9.5 - Remove bricks when hit, update score
-  - [ ] 9.6 - Test brick destruction and collision
+- [x] step 6 - Paddle Object
+  - [x] 6.1 - Create `Paddle` class with position, size, and speed
+  - [x] 6.2 - Draw paddle as rectangle in GameScene
+  - [x] 6.3 - Implement keyboard input handling (A/D or Arrow keys)
+  - [x] 6.4 - Add smooth paddle movement with boundaries
+  - [x] 6.5 - Test paddle stays within screen bounds
+- [x] step 7 - Ball Object & Basic Physics
+  - [x] 7.1 - Create `Ball` class with position, velocity, and radius
+  - [x] 7.2 - Implement ball drawing (circle)
+  - [x] 7.3 - Add ball movement with velocity
+  - [x] 7.4 - Implement ball-boundary collision (wall bouncing)
+  - [x] 7.5 - Test ball bounces correctly off walls
+- [x] step 8 - Ball-Paddle Collision
+  - [x] 8.1 - Implement ball-paddle collision detection
+  - [x] 8.2 - Add ball reflection based on paddle hit position
+  - [x] 8.3 - Add "English" effect (ball angle changes based on where it hits paddle)
+  - [x] 8.4 - Test various paddle-ball interactions
+  - [x] 8.5 - Handle edge cases (ball hitting paddle corners)
+- [x] step 9 - Brick System
+  - [x] 9.1 - Create `Brick` class with position, size, and state
+  - [x] 9.2 - Create grid of bricks at top of screen
+  - [x] 9.3 - Draw all bricks with different colors/patterns
+  - [x] 9.4 - Implement ball-brick collision detection
+  - [x] 9.5 - Remove bricks when hit, update score
+  - [x] 9.6 - Test brick destruction and collision
 - [ ] step 10 - Game Loop & Timing
   - [ ] 10.1 - Implement game loop using `QTimer`
   - [ ] 10.2 - Set consistent frame rate (60 FPS)

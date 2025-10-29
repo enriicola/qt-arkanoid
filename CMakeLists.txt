@@ -16,6 +16,12 @@ add_executable(qt-arkanoid
     src/Game.cpp
     src/GameScene.h
     src/GameScene.cpp
+    src/Paddle.h
+    src/Paddle.cpp
+    src/Ball.h
+    src/Ball.cpp
+    src/Brick.h
+    src/Brick.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE

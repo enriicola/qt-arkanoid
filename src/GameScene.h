@@ -3,6 +3,14 @@
 
 #include <QWidget>
 #include <QPointF>
+#include <QTimer>
+#include <QElapsedTimer>
+#include <QSet>
+#include <vector>
+#include <memory>
+#include "Paddle.h"
+#include "Ball.h"
+#include "Brick.h"
 
 class GameScene : public QWidget
 {
@@ -16,20 +24,37 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+
+private slots:
+    void gameLoop();
 
 private:
     void drawBackground(QPainter &painter);
-    void drawGrid(QPainter &painter);
-    void drawCoordinateSystem(QPainter &painter);
-    void drawBoundaries(QPainter &painter);
-    void drawMousePosition(QPainter &painter);
+    void drawPaddle(QPainter &painter);
+    void drawBall(QPainter &painter);
+    void drawBricks(QPainter &painter);
+    void drawScore(QPainter &painter);
+    
+    void updateGame(qreal delta);
+    void checkBallPaddleCollision();
+    void checkBallBrickCollisions();
+    void createBricks();
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
     static constexpr qreal GAME_HEIGHT = 600.0;
-    QPointF lastMousePos;
-    bool mouseClicked;
+    
+    std::unique_ptr<Paddle> m_paddle;
+    std::unique_ptr<Ball> m_ball;
+    std::vector<std::unique_ptr<Brick>> m_bricks;
+    
+    QTimer m_gameTimer;
+    QElapsedTimer m_elapsedTimer;
+    QSet<int> m_pressedKeys;
+    
+    int m_score;
 };
 
 #endif
