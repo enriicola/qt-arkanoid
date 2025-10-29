@@ -92,12 +92,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 10.3 - Add delta time for frame-independent movement
   - [x] 10.4 - Implement pause/resume functionality
   - [x] 10.5 - Add simple FPS counter for debugging
-- [ ] step 11 - Game States & Logic
-  - [ ] 11.1 - Create `GameState` enum (Menu, Playing, Paused, GameOver, Victory)
-  - [ ] 11.2 - Implement state transitions and state-specific rendering
-  - [ ] 11.3 - Add "Game Over" when ball falls below paddle
-  - [ ] 11.4 - Add "Victory" when all bricks are destroyed
-  - [ ] 11.5 - Add restart functionality
+- [x] step 11 - Game States & Logic
+  - [x] 11.1 - Create `GameState` enum (Menu, Playing, Paused, GameOver, Victory)
+  - [x] 11.2 - Implement state transitions and state-specific rendering
+  - [x] 11.3 - Add "Game Over" when ball falls below paddle
+  - [x] 11.4 - Add "Victory" when all bricks are destroyed
+  - [x] 11.5 - Add restart functionality
 - [ ] step 12 - Score & UI Overlay
   - [ ] 12.1 - Add score tracking system
   - [ ] 12.2 - Draw score, lives, level on screen

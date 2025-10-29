@@ -8,7 +8,7 @@
 #include <cmath>
 
 GameScene::GameScene(QWidget *parent)
-    : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0)
+    : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0), m_gameState(GameState::Playing)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -55,14 +55,27 @@ void GameScene::paintEvent(QPaintEvent *event)
     
     if (m_paused) {
         drawPauseOverlay(painter);
+    } else if (m_gameState == GameState::GameOver) {
+        drawGameOverOverlay(painter);
+    } else if (m_gameState == GameState::Victory) {
+        drawVictoryOverlay(painter);
     }
 }
 
 void GameScene::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_P || event->key() == Qt::Key_Space) {
-        togglePause();
+        if (m_gameState == GameState::Playing) {
+            togglePause();
+        }
     }
+    
+    if (event->key() == Qt::Key_R) {
+        if (m_gameState == GameState::GameOver || m_gameState == GameState::Victory) {
+            restartGame();
+        }
+    }
+    
     m_pressedKeys.insert(event->key());
 }
 
@@ -83,8 +96,9 @@ void GameScene::gameLoop()
         m_fpsTimer.restart();
     }
     
-    if (!m_paused) {
+    if (!m_paused && m_gameState == GameState::Playing) {
         updateGame(delta);
+        checkGameState();
     }
     update();
 }
@@ -92,6 +106,30 @@ void GameScene::gameLoop()
 void GameScene::togglePause()
 {
     m_paused = !m_paused;
+}
+
+void GameScene::startNewGame()
+{
+    restartGame();
+}
+
+void GameScene::restartGame()
+{
+    m_score = 0;
+    m_paused = false;
+    m_gameState = GameState::Playing;
+    
+    m_paddle->setPosition(350.0, 550.0);
+    resetBall();
+    
+    m_bricks.clear();
+    createBricks();
+}
+
+void GameScene::resetBall()
+{
+    m_ball->setVelocity(200.0, -200.0);
+    m_paddle->setPosition(m_paddle->position().x(), 550.0);
 }
 
 void GameScene::updateGame(qreal delta)
@@ -110,6 +148,25 @@ void GameScene::updateGame(qreal delta)
     
     checkBallPaddleCollision();
     checkBallBrickCollisions();
+}
+
+void GameScene::checkGameState()
+{
+    if (m_ball->y() > GAME_HEIGHT) {
+        m_gameState = GameState::GameOver;
+    }
+    
+    bool allBricksDestroyed = true;
+    for (const auto &brick : m_bricks) {
+        if (brick->isActive()) {
+            allBricksDestroyed = false;
+            break;
+        }
+    }
+    
+    if (allBricksDestroyed) {
+        m_gameState = GameState::Victory;
+    }
 }
 
 void GameScene::checkBallPaddleCollision()
@@ -292,4 +349,42 @@ void GameScene::drawPauseOverlay(QPainter &painter)
     QRect textRect = rect();
     textRect.translate(0, 60);
     painter.drawText(textRect, Qt::AlignCenter, "Press P or Space to resume");
+}
+
+void GameScene::drawGameOverOverlay(QPainter &painter)
+{
+    painter.fillRect(rect(), QColor(0, 0, 0, 180));
+    
+    painter.setPen(QColor(255, 100, 100));
+    painter.setFont(QFont("Arial", 48, QFont::Bold));
+    painter.drawText(rect(), Qt::AlignCenter, "GAME OVER");
+    
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 20));
+    QRect textRect = rect();
+    textRect.translate(0, 60);
+    painter.drawText(textRect, Qt::AlignCenter, QString("Final Score: %1").arg(m_score));
+    
+    painter.setFont(QFont("Arial", 16));
+    textRect.translate(0, 40);
+    painter.drawText(textRect, Qt::AlignCenter, "Press R to restart");
+}
+
+void GameScene::drawVictoryOverlay(QPainter &painter)
+{
+    painter.fillRect(rect(), QColor(0, 0, 0, 180));
+    
+    painter.setPen(QColor(100, 255, 100));
+    painter.setFont(QFont("Arial", 48, QFont::Bold));
+    painter.drawText(rect(), Qt::AlignCenter, "VICTORY!");
+    
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 20));
+    QRect textRect = rect();
+    textRect.translate(0, 60);
+    painter.drawText(textRect, Qt::AlignCenter, QString("Score: %1").arg(m_score));
+    
+    painter.setFont(QFont("Arial", 16));
+    textRect.translate(0, 40);
+    painter.drawText(textRect, Qt::AlignCenter, "Press R to play again");
 }

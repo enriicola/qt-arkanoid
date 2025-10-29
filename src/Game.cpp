@@ -73,8 +73,9 @@ void Game::createMenus()
 
 void Game::onNewGame()
 {
-    QMessageBox::information(this, tr("New Game"), 
-                            tr("New Game functionality will be implemented later."));
+    if (gameScene) {
+        gameScene->startNewGame();
+    }
 }
 
 void Game::onPause()

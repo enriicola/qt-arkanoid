@@ -12,6 +12,14 @@
 #include "Ball.h"
 #include "Brick.h"
 
+enum class GameState {
+    Menu,
+    Playing,
+    Paused,
+    GameOver,
+    Victory
+};
+
 class GameScene : public QWidget
 {
     Q_OBJECT
@@ -24,6 +32,9 @@ public:
     
     void togglePause();
     bool isPaused() const { return m_paused; }
+    void startNewGame();
+    void restartGame();
+    GameState gameState() const { return m_gameState; }
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -41,11 +52,15 @@ private:
     void drawScore(QPainter &painter);
     void drawFPS(QPainter &painter);
     void drawPauseOverlay(QPainter &painter);
+    void drawGameOverOverlay(QPainter &painter);
+    void drawVictoryOverlay(QPainter &painter);
     
     void updateGame(qreal delta);
     void checkBallPaddleCollision();
     void checkBallBrickCollisions();
+    void checkGameState();
     void createBricks();
+    void resetBall();
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
@@ -66,6 +81,7 @@ private:
     bool m_paused;
     int m_frameCount;
     qreal m_fps;
+    GameState m_gameState;
 };
 
 #endif
