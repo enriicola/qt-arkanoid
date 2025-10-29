@@ -62,12 +62,15 @@ private:
     void checkGameState();
     void createBricks();
     void resetBall();
+    void loseLife();
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
     static constexpr qreal GAME_HEIGHT = 600.0;
     static constexpr int TARGET_FPS = 60;
     static constexpr qreal FRAME_TIME = 1000.0 / TARGET_FPS;
+    static constexpr int STARTING_LIVES = 3;
+    static constexpr qreal INVULNERABILITY_TIME = 2.0;
     
     std::unique_ptr<Paddle> m_paddle;
     std::unique_ptr<Ball> m_ball;
@@ -85,6 +88,8 @@ private:
     GameState m_gameState;
     int m_lives;
     int m_level;
+    bool m_invulnerable;
+    qreal m_invulnerabilityTimer;
 };
 
 #endif

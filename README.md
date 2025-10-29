@@ -104,12 +104,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 12.3 - Create nice UI overlay (semi-transparent panels)
   - [x] 12.4 - Add custom fonts for game text
   - [x] 12.5 - Test UI doesn't interfere with gameplay
-- [ ] step 13 - Multiple Lives System
-  - [ ] 13.1 - Add lives counter (start with 3 lives)
-  - [ ] 13.2 - Reset ball/paddle position when life lost
-  - [ ] 13.3 - Add brief invulnerability period after losing life
-  - [ ] 13.4 - Visual feedback for life loss
-  - [ ] 13.5 - Game over when no lives remaining
+- [x] step 13 - Multiple Lives System
+  - [x] 13.1 - Add lives counter (start with 3 lives)
+  - [x] 13.2 - Reset ball/paddle position when life lost
+  - [x] 13.3 - Add brief invulnerability period after losing life
+  - [x] 13.4 - Visual feedback for life loss
+  - [x] 13.5 - Game over when no lives remaining
 - [ ] step 14 - Power-ups System
   - [ ] 14.1 - Create `PowerUp` base class
   - [ ] 14.2 - Implement different power-up types (bigger paddle, multi-ball, etc.)

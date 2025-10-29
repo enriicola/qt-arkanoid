@@ -9,7 +9,8 @@
 
 GameScene::GameScene(QWidget *parent)
     : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0), 
-      m_gameState(GameState::Playing), m_lives(3), m_level(1)
+      m_gameState(GameState::Playing), m_lives(STARTING_LIVES), m_level(1),
+      m_invulnerable(false), m_invulnerabilityTimer(0.0)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -119,8 +120,10 @@ void GameScene::restartGame()
     m_score = 0;
     m_paused = false;
     m_gameState = GameState::Playing;
-    m_lives = 3;
+    m_lives = STARTING_LIVES;
     m_level = 1;
+    m_invulnerable = false;
+    m_invulnerabilityTimer = 0.0;
     
     m_paddle->setPosition(350.0, 550.0);
     resetBall();
@@ -131,12 +134,34 @@ void GameScene::restartGame()
 
 void GameScene::resetBall()
 {
+    m_ball = std::make_unique<Ball>(400.0, 300.0, 8.0);
     m_ball->setVelocity(200.0, -200.0);
-    m_paddle->setPosition(m_paddle->position().x(), 550.0);
+}
+
+void GameScene::loseLife()
+{
+    m_lives--;
+    
+    if (m_lives <= 0) {
+        m_gameState = GameState::GameOver;
+    } else {
+        m_paddle->setPosition(350.0, 550.0);
+        resetBall();
+        m_invulnerable = true;
+        m_invulnerabilityTimer = INVULNERABILITY_TIME;
+    }
 }
 
 void GameScene::updateGame(qreal delta)
 {
+    if (m_invulnerable) {
+        m_invulnerabilityTimer -= delta;
+        if (m_invulnerabilityTimer <= 0.0) {
+            m_invulnerable = false;
+            m_invulnerabilityTimer = 0.0;
+        }
+    }
+    
     if (m_pressedKeys.contains(Qt::Key_A) || m_pressedKeys.contains(Qt::Key_Left)) {
         m_paddle->moveLeft(delta);
     }
@@ -149,14 +174,16 @@ void GameScene::updateGame(qreal delta)
     m_ball->move(delta);
     m_ball->checkBoundaryCollision(0, GAME_WIDTH, 0, GAME_HEIGHT);
     
-    checkBallPaddleCollision();
+    if (!m_invulnerable) {
+        checkBallPaddleCollision();
+    }
     checkBallBrickCollisions();
 }
 
 void GameScene::checkGameState()
 {
     if (m_ball->y() > GAME_HEIGHT) {
-        m_gameState = GameState::GameOver;
+        loseLife();
     }
     
     bool allBricksDestroyed = true;
@@ -270,6 +297,10 @@ void GameScene::drawBackground(QPainter &painter)
 
 void GameScene::drawPaddle(QPainter &painter)
 {
+    if (m_invulnerable && static_cast<int>(m_invulnerabilityTimer * 10) % 2 == 0) {
+        return;
+    }
+    
     QRectF paddleRect = m_paddle->rect();
     QPoint screenPos = gameToScreen(paddleRect.topLeft());
     QPoint screenBottomRight = gameToScreen(paddleRect.bottomRight());
@@ -277,11 +308,17 @@ void GameScene::drawPaddle(QPainter &painter)
     QRectF screenRect(screenPos, screenBottomRight);
     
     QLinearGradient gradient(screenRect.topLeft(), screenRect.bottomLeft());
-    gradient.setColorAt(0, QColor(100, 200, 255));
-    gradient.setColorAt(1, QColor(50, 150, 255));
+    
+    if (m_invulnerable) {
+        gradient.setColorAt(0, QColor(255, 200, 100));
+        gradient.setColorAt(1, QColor(255, 150, 50));
+    } else {
+        gradient.setColorAt(0, QColor(100, 200, 255));
+        gradient.setColorAt(1, QColor(50, 150, 255));
+    }
     
     painter.setBrush(gradient);
-    painter.setPen(QPen(QColor(200, 230, 255), 2));
+    painter.setPen(QPen(m_invulnerable ? QColor(255, 230, 200) : QColor(200, 230, 255), 2));
     painter.drawRoundedRect(screenRect, 5, 5);
 }
 
