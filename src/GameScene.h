@@ -54,6 +54,7 @@ private:
     void drawPauseOverlay(QPainter &painter);
     void drawGameOverOverlay(QPainter &painter);
     void drawVictoryOverlay(QPainter &painter);
+    void drawHUD(QPainter &painter);
     
     void updateGame(qreal delta);
     void checkBallPaddleCollision();
@@ -82,6 +83,8 @@ private:
     int m_frameCount;
     qreal m_fps;
     GameState m_gameState;
+    int m_lives;
+    int m_level;
 };
 
 #endif

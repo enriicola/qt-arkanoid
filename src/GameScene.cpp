@@ -8,7 +8,8 @@
 #include <cmath>
 
 GameScene::GameScene(QWidget *parent)
-    : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0), m_gameState(GameState::Playing)
+    : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0), 
+      m_gameState(GameState::Playing), m_lives(3), m_level(1)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -50,7 +51,7 @@ void GameScene::paintEvent(QPaintEvent *event)
     drawBricks(painter);
     drawPaddle(painter);
     drawBall(painter);
-    drawScore(painter);
+    drawHUD(painter);
     drawFPS(painter);
     
     if (m_paused) {
@@ -118,6 +119,8 @@ void GameScene::restartGame()
     m_score = 0;
     m_paused = false;
     m_gameState = GameState::Playing;
+    m_lives = 3;
+    m_level = 1;
     
     m_paddle->setPosition(350.0, 550.0);
     resetBall();
@@ -328,6 +331,31 @@ void GameScene::drawScore(QPainter &painter)
         if (brick->isActive()) activeBricks++;
     }
     painter.drawText(width() - 150, 25, QString("Bricks: %1").arg(activeBricks));
+}
+
+void GameScene::drawHUD(QPainter &painter)
+{
+    QRect topPanel(0, 0, width(), 45);
+    painter.fillRect(topPanel, QColor(0, 0, 0, 120));
+    
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 18, QFont::Bold));
+    painter.drawText(15, 28, QString("Score: %1").arg(m_score));
+    
+    painter.drawText(width() / 2 - 50, 28, QString("Level: %1").arg(m_level));
+    
+    painter.setPen(QColor(255, 100, 100));
+    QString livesText = QString("Lives: %1").arg(m_lives);
+    painter.drawText(width() - 130, 28, livesText);
+    
+    int activeBricks = 0;
+    for (const auto &brick : m_bricks) {
+        if (brick->isActive()) activeBricks++;
+    }
+    
+    painter.setPen(QColor(150, 200, 255));
+    painter.setFont(QFont("Arial", 12));
+    painter.drawText(15, height() - 35, QString("Bricks: %1").arg(activeBricks));
 }
 
 void GameScene::drawFPS(QPainter &painter)

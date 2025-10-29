@@ -98,12 +98,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 11.3 - Add "Game Over" when ball falls below paddle
   - [x] 11.4 - Add "Victory" when all bricks are destroyed
   - [x] 11.5 - Add restart functionality
-- [ ] step 12 - Score & UI Overlay
-  - [ ] 12.1 - Add score tracking system
-  - [ ] 12.2 - Draw score, lives, level on screen
-  - [ ] 12.3 - Create nice UI overlay (semi-transparent panels)
-  - [ ] 12.4 - Add custom fonts for game text
-  - [ ] 12.5 - Test UI doesn't interfere with gameplay
+- [x] step 12 - Score & UI Overlay
+  - [x] 12.1 - Add score tracking system
+  - [x] 12.2 - Draw score, lives, level on screen
+  - [x] 12.3 - Create nice UI overlay (semi-transparent panels)
+  - [x] 12.4 - Add custom fonts for game text
+  - [x] 12.5 - Test UI doesn't interfere with gameplay
 - [ ] step 13 - Multiple Lives System
   - [ ] 13.1 - Add lives counter (start with 3 lives)
   - [ ] 13.2 - Reset ball/paddle position when life lost
