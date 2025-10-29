@@ -202,7 +202,20 @@ void GameScene::resetGame()
 void GameScene::resetBall()
 {
     m_ball = std::make_unique<Ball>(400.0, 300.0, 8.0);
-    m_ball->setVelocity(200.0, -200.0);
+    
+    // Use level-specific ball speed if available
+    qreal ballSpeed = 200.0;
+    if (m_levelManager) {
+        const Level *level = m_levelManager->getCurrentLevel();
+        if (level && level->ballSpeed() > 0.0) {
+            ballSpeed = level->ballSpeed();
+        }
+    }
+    
+    // Set velocity at 45-degree angle (downward and to the right)
+    qreal vx = ballSpeed * 0.707;
+    qreal vy = -ballSpeed * 0.707;
+    m_ball->setVelocity(vx, vy);
 }
 
 void GameScene::loseLife()
@@ -892,7 +905,10 @@ void GameScene::loadCurrentLevel()
         return;
     }
     
-    // TODO: Update ball speed based on level->ballSpeed()
+    // Update ball speed based on level data
+    if (m_ball && level->ballSpeed() > 0.0) {
+        m_ball->setSpeed(level->ballSpeed());
+    }
     
     // Recreate bricks from level data
     createBricks();

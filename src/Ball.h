@@ -10,6 +10,7 @@ public:
 
     void move(qreal delta);
     void setVelocity(qreal vx, qreal vy);
+    void setSpeed(qreal speed);
     void reverseX() { m_velocity.setX(-m_velocity.x()); }
     void reverseY() { m_velocity.setY(-m_velocity.y()); }
     void checkBoundaryCollision(qreal minX, qreal maxX, qreal minY, qreal maxY);

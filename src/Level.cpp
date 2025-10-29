@@ -29,7 +29,7 @@ bool Level::loadFromJson(const QString &filePath)
     
     QJsonObject obj = doc.object();
     
-    m_levelNumber = obj.value("level").toInt(1);
+    m_levelNumber = obj.value("levelNumber").toInt(1);
     m_name = obj.value("name").toString("Untitled");
     m_description = obj.value("description").toString("");
     m_ballSpeed = obj.value("ballSpeed").toDouble(200.0);

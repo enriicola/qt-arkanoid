@@ -17,6 +17,22 @@ void Ball::setVelocity(qreal vx, qreal vy)
     m_velocity = QPointF(vx, vy);
 }
 
+void Ball::setSpeed(qreal speed)
+{
+    // Maintain current direction but change magnitude
+    qreal currentSpeed = std::sqrt(m_velocity.x() * m_velocity.x() + 
+                                   m_velocity.y() * m_velocity.y());
+    
+    if (currentSpeed > 0.0) {
+        qreal scale = speed / currentSpeed;
+        m_velocity.setX(m_velocity.x() * scale);
+        m_velocity.setY(m_velocity.y() * scale);
+    } else {
+        // Default direction if velocity is zero
+        m_velocity = QPointF(speed * 0.707, -speed * 0.707);
+    }
+}
+
 void Ball::checkBoundaryCollision(qreal minX, qreal maxX, qreal minY, qreal maxY)
 {
     if (m_position.x() - m_radius <= minX) {
