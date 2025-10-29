@@ -13,6 +13,7 @@
 #include "Brick.h"
 #include "PowerUp.h"
 #include "SoundManager.h"
+#include "Particle.h"
 
 enum class GameState {
     Menu,
@@ -59,6 +60,8 @@ private:
     void drawHUD(QPainter &painter);
     void drawPowerUps(QPainter &painter);
     void drawActivePowerUps(QPainter &painter);
+    void drawParticles(QPainter &painter);
+    void drawBallTrail(QPainter &painter);
     
     void updateGame(qreal delta);
     void checkBallPaddleCollision();
@@ -70,6 +73,8 @@ private:
     void loseLife();
     void applyPowerUp(PowerUpType type);
     void spawnPowerUp(qreal x, qreal y);
+    void spawnParticles(qreal x, qreal y, const QColor &color, int count);
+    void updateScreenShake(qreal delta);
 
 private:
     static constexpr qreal GAME_WIDTH = 800.0;
@@ -84,6 +89,8 @@ private:
     std::vector<std::unique_ptr<Brick>> m_bricks;
     std::vector<std::unique_ptr<PowerUp>> m_powerUps;
     std::unique_ptr<SoundManager> m_soundManager;
+    std::vector<Particle> m_particles;
+    std::vector<QPointF> m_ballTrail;
     
     QTimer m_gameTimer;
     QElapsedTimer m_elapsedTimer;
@@ -104,6 +111,10 @@ private:
     qreal m_ballSpeedTimer;
     QString m_activePowerUpText;
     qreal m_powerUpTextTimer;
+    
+    qreal m_screenShakeAmount;
+    qreal m_screenShakeDuration;
+    QPointF m_screenShakeOffset;
 };
 
 #endif

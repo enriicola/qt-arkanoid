@@ -26,6 +26,8 @@ add_executable(qt-arkanoid
     src/PowerUp.cpp
     src/SoundManager.h
     src/SoundManager.cpp
+    src/Particle.h
+    src/Particle.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE

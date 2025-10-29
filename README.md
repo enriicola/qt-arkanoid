@@ -122,12 +122,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 15.3 - Implement background music
   - [x] 15.4 - Add volume controls
   - [x] 15.5 - Efficient audio resource management
-- [ ] step 16 - Visual Effects & Animations
-  - [ ] 16.1 - Add particle effects for brick destruction
-  - [ ] 16.2 - Smooth animations for power-up effects
-  - [ ] 16.3 - Ball trail effect
-  - [ ] 16.4 - Screen shake for big impacts
-  - [ ] 16.5 - Brick destruction animations
+- [x] step 16 - Visual Effects & Animations
+  - [x] 16.1 - Add particle effects for brick destruction
+  - [x] 16.2 - Smooth animations for power-up effects
+  - [x] 16.3 - Ball trail effect
+  - [x] 16.4 - Screen shake for big impacts
+  - [x] 16.5 - Brick destruction animations
 - [ ] step 17 - Settings & Configuration
   - [ ] 17.1 - Create settings dialog for controls, audio, graphics
   - [ ] 17.2 - Save/load settings using `QSettings`

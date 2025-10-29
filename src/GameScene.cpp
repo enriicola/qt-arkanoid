@@ -4,6 +4,7 @@
 #include "Brick.h"
 #include "PowerUp.h"
 #include "SoundManager.h"
+#include "Particle.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QKeyEvent>
@@ -15,7 +16,8 @@ GameScene::GameScene(QWidget *parent)
     : QWidget(parent), m_score(0), m_paused(false), m_frameCount(0), m_fps(0.0), 
       m_gameState(GameState::Playing), m_lives(STARTING_LIVES), m_level(1),
       m_invulnerable(false), m_invulnerabilityTimer(0.0),
-      m_paddleSizeTimer(0.0), m_ballSpeedTimer(0.0), m_powerUpTextTimer(0.0)
+      m_paddleSizeTimer(0.0), m_ballSpeedTimer(0.0), m_powerUpTextTimer(0.0),
+      m_screenShakeAmount(0.0), m_screenShakeDuration(0.0)
 {
     setMinimumSize(800, 600);
     setFocusPolicy(Qt::StrongFocus);
@@ -58,7 +60,14 @@ void GameScene::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     
+    // Apply screen shake
+    if (m_screenShakeDuration > 0.0) {
+        painter.translate(m_screenShakeOffset);
+    }
+    
     drawBackground(painter);
+    drawBallTrail(painter);
+    drawParticles(painter);
     drawBricks(painter);
     drawPaddle(painter);
     drawBall(painter);
@@ -148,6 +157,11 @@ void GameScene::restartGame()
     createBricks();
     
     m_powerUps.clear();
+    m_particles.clear();
+    m_ballTrail.clear();
+    m_screenShakeAmount = 0.0;
+    m_screenShakeDuration = 0.0;
+    m_screenShakeOffset = QPointF(0, 0);
 }
 
 void GameScene::resetBall()
@@ -160,6 +174,10 @@ void GameScene::loseLife()
 {
     m_lives--;
     m_soundManager->playSound(SoundManager::Sound::LoseLife);
+    
+    // Big screen shake on life loss
+    m_screenShakeAmount = 8.0;
+    m_screenShakeDuration = 0.3;
     
     if (m_lives <= 0) {
         m_gameState = GameState::GameOver;
@@ -206,6 +224,24 @@ void GameScene::updateGame(qreal delta)
     
     if (m_powerUpTextTimer > 0.0) {
         m_powerUpTextTimer -= delta;
+    }
+    
+    updateScreenShake(delta);
+    
+    // Update particles
+    for (auto &particle : m_particles) {
+        particle.update(delta);
+    }
+    m_particles.erase(
+        std::remove_if(m_particles.begin(), m_particles.end(),
+            [](const Particle &p) { return !p.isAlive(); }),
+        m_particles.end()
+    );
+    
+    // Update ball trail
+    m_ballTrail.push_back(m_ball->position());
+    if (m_ballTrail.size() > 10) {
+        m_ballTrail.erase(m_ballTrail.begin());
     }
     
     if (m_pressedKeys.contains(Qt::Key_A) || m_pressedKeys.contains(Qt::Key_Left)) {
@@ -300,6 +336,13 @@ void GameScene::checkBallBrickCollisions()
             brick->destroy();
             m_score += 10;
             m_soundManager->playSound(SoundManager::Sound::BrickBreak);
+            
+            // Spawn particles for brick destruction
+            spawnParticles(brickRect.center().x(), brickRect.center().y(), brick->color(), 15);
+            
+            // Add screen shake
+            m_screenShakeAmount = 3.0;
+            m_screenShakeDuration = 0.1;
             
             spawnPowerUp(brickRect.center().x(), brickRect.center().y());
             
@@ -533,6 +576,9 @@ void GameScene::checkPowerUpCollisions()
         QRectF powerUpRect = powerUp->rect();
         
         if (paddleRect.intersects(powerUpRect)) {
+            // Spawn particles when power-up is collected
+            spawnParticles(powerUpRect.center().x(), powerUpRect.center().y(), 
+                          powerUp->color(), 10);
             applyPowerUp(powerUp->type());
             powerUp->setActive(false);
         }
@@ -629,5 +675,70 @@ void GameScene::drawActivePowerUps(QPainter &painter)
         textRect.setHeight(50);
         
         painter.drawText(textRect, Qt::AlignCenter, m_activePowerUpText);
+    }
+}
+
+void GameScene::drawParticles(QPainter &painter)
+{
+    painter.setRenderHint(QPainter::Antialiasing);
+    
+    for (const auto &particle : m_particles) {
+        if (!particle.isAlive()) continue;
+        
+        QPoint screenPos = gameToScreen(particle.position());
+        qreal size = particle.size();
+        QColor color = particle.color();
+        
+        painter.setBrush(color);
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(screenPos, static_cast<int>(size), static_cast<int>(size));
+    }
+}
+
+void GameScene::drawBallTrail(QPainter &painter)
+{
+    if (m_ballTrail.size() < 2) return;
+    
+    painter.setRenderHint(QPainter::Antialiasing);
+    
+    for (size_t i = 0; i < m_ballTrail.size(); ++i) {
+        qreal alpha = static_cast<qreal>(i) / m_ballTrail.size();
+        qreal radius = m_ball->radius() * alpha * 0.5;
+        
+        QPoint screenPos = gameToScreen(m_ballTrail[i]);
+        
+        QColor trailColor(150, 200, 255, static_cast<int>(alpha * 100));
+        painter.setBrush(trailColor);
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(screenPos, static_cast<int>(radius), static_cast<int>(radius));
+    }
+}
+
+void GameScene::spawnParticles(qreal x, qreal y, const QColor &color, int count)
+{
+    for (int i = 0; i < count; ++i) {
+        qreal angle = (std::rand() % 360) * M_PI / 180.0;
+        qreal speed = 100.0 + (std::rand() % 200);
+        qreal vx = std::cos(angle) * speed;
+        qreal vy = std::sin(angle) * speed - 100.0;
+        qreal lifetime = 0.5 + (std::rand() % 100) / 100.0;
+        
+        m_particles.emplace_back(x, y, vx, vy, color, lifetime);
+    }
+}
+
+void GameScene::updateScreenShake(qreal delta)
+{
+    if (m_screenShakeDuration > 0.0) {
+        m_screenShakeDuration -= delta;
+        
+        if (m_screenShakeDuration > 0.0) {
+            qreal angle = (std::rand() % 360) * M_PI / 180.0;
+            m_screenShakeOffset.setX(std::cos(angle) * m_screenShakeAmount);
+            m_screenShakeOffset.setY(std::sin(angle) * m_screenShakeAmount);
+        } else {
+            m_screenShakeOffset = QPointF(0, 0);
+            m_screenShakeDuration = 0.0;
+        }
     }
 }
