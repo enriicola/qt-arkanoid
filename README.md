@@ -27,16 +27,16 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
 - [x] 0.1 hello world + cmake + qt6
 - [x] 0.2 minimal widgets app + signals/slots
 - [x] 0.3 qml "hello" + integrate c++ (created, may need Qt modules)
-- [ ] 0.4 worker-object with qthread
+- [x] 0.4 worker-object with qthread
 
 ## step 1 to n
 
-- [ ] step 1 - Environment Setup & Hello Qt
-  - [ ] 1.1 - Install Qt6 and CMake
-  - [ ] 1.2 - Create `CMakeLists.txt` with Qt6 Widgets
-  - [ ] 1.3 - Write minimal `main.cpp` with QApplication
-  - [ ] 1.4 - Create empty window that shows and closes
-  - [ ] 1.5 - Test build system works
+- [x] step 1 - Environment Setup & Hello Qt
+  - [x] 1.1 - Install Qt6 and CMake
+  - [x] 1.2 - Create `CMakeLists.txt` with Qt6 Widgets
+  - [x] 1.3 - Write minimal `main.cpp` with QApplication
+  - [x] 1.4 - Create empty window that shows and closes
+  - [x] 1.5 - Test build system works
 - [ ] step 2 - Custom Game Window Class
   - [ ] 2.1 - Create `Game` class inheriting from `QMainWindow`
   - [ ] 2.2 - Set fixed window size (800x600)

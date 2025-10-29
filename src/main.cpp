@@ -1,37 +1,14 @@
-#include <QCoreApplication>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QUrl>
-
-#include "AppState.h"
+#include <QApplication>
+#include <QWidget>
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
-    app.setApplicationDisplayName("QML Counter");
+    QApplication app(argc, argv);
 
-    AppState appState;
-
-    QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("appState", &appState);
-
-    const QUrl mainQmlUrl(QStringLiteral("qrc:/qml/Main.qml"));
-    QObject::connect(
-        &engine,
-        &QQmlApplicationEngine::objectCreated,
-        &app,
-        [mainQmlUrl](QObject *obj, const QUrl &objUrl) {
-            if (!obj && mainQmlUrl == objUrl) {
-                QCoreApplication::exit(-1);
-            }
-        },
-        Qt::QueuedConnection);
-
-    engine.load(mainQmlUrl);
-
-    if (engine.rootObjects().isEmpty())
-        return -1;
+    QWidget window;
+    window.setWindowTitle("Qt Arkanoid - Step 1");
+    window.resize(800, 600);
+    window.show();
 
     return app.exec();
 }

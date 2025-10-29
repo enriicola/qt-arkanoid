@@ -7,20 +7,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Qml Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Qml Quick)
+# Step 1.1 & 1.2 - Find Qt6 Widgets
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
+# Step 1.3 - Create executable with main.cpp
 add_executable(qt-arkanoid
     src/main.cpp
-    src/AppState.cpp
-    src/CounterWorker.cpp
-    src/qml.qrc
 )
 
 target_link_libraries(qt-arkanoid PRIVATE
-    Qt${QT_VERSION_MAJOR}::Qml
-    Qt${QT_VERSION_MAJOR}::Quick
+    Qt6::Widgets
+)
+
+include(GNUInstallDirs)
+install(TARGETS qt-arkanoid
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
