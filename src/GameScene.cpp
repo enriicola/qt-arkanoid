@@ -3,6 +3,7 @@
 #include "Ball.h"
 #include "Brick.h"
 #include "PowerUp.h"
+#include "SoundManager.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QKeyEvent>
@@ -23,6 +24,7 @@ GameScene::GameScene(QWidget *parent)
     
     m_paddle = std::make_unique<Paddle>(350.0, 550.0, 100.0, 15.0);
     m_ball = std::make_unique<Ball>(400.0, 300.0, 8.0);
+    m_soundManager = std::make_unique<SoundManager>(this);
     
     createBricks();
     
@@ -30,6 +32,8 @@ GameScene::GameScene(QWidget *parent)
     m_gameTimer.start(static_cast<int>(FRAME_TIME));
     m_elapsedTimer.start();
     m_fpsTimer.start();
+    
+    m_soundManager->playBackgroundMusic();
 }
 
 QPointF GameScene::screenToGame(const QPoint &screenPos) const
@@ -155,9 +159,11 @@ void GameScene::resetBall()
 void GameScene::loseLife()
 {
     m_lives--;
+    m_soundManager->playSound(SoundManager::Sound::LoseLife);
     
     if (m_lives <= 0) {
         m_gameState = GameState::GameOver;
+        m_soundManager->playSound(SoundManager::Sound::GameOver);
     } else {
         m_paddle->setPosition(350.0, 550.0);
         resetBall();
@@ -246,6 +252,7 @@ void GameScene::checkGameState()
     
     if (allBricksDestroyed) {
         m_gameState = GameState::Victory;
+        m_soundManager->playSound(SoundManager::Sound::Victory);
     }
 }
 
@@ -271,6 +278,7 @@ void GameScene::checkBallPaddleCollision()
         qreal newVy = -std::abs(speed * 0.8);
         
         m_ball->setVelocity(newVx, newVy);
+        m_soundManager->playSound(SoundManager::Sound::BallHit);
     }
 }
 
@@ -291,6 +299,7 @@ void GameScene::checkBallBrickCollisions()
             
             brick->destroy();
             m_score += 10;
+            m_soundManager->playSound(SoundManager::Sound::BrickBreak);
             
             spawnPowerUp(brickRect.center().x(), brickRect.center().y());
             
@@ -533,6 +542,7 @@ void GameScene::checkPowerUpCollisions()
 void GameScene::applyPowerUp(PowerUpType type)
 {
     const qreal DURATION = 10.0;
+    m_soundManager->playSound(SoundManager::Sound::PowerUp);
     
     switch (type) {
         case PowerUpType::BiggerPaddle:

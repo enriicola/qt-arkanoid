@@ -12,6 +12,7 @@
 #include "Ball.h"
 #include "Brick.h"
 #include "PowerUp.h"
+#include "SoundManager.h"
 
 enum class GameState {
     Menu,
@@ -82,6 +83,7 @@ private:
     std::unique_ptr<Ball> m_ball;
     std::vector<std::unique_ptr<Brick>> m_bricks;
     std::vector<std::unique_ptr<PowerUp>> m_powerUps;
+    std::unique_ptr<SoundManager> m_soundManager;
     
     QTimer m_gameTimer;
     QElapsedTimer m_elapsedTimer;

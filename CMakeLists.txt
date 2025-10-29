@@ -24,6 +24,8 @@ add_executable(qt-arkanoid
     src/Brick.cpp
     src/PowerUp.h
     src/PowerUp.cpp
+    src/SoundManager.h
+    src/SoundManager.cpp
 )
 
 target_link_libraries(qt-arkanoid PRIVATE

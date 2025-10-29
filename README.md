@@ -116,12 +116,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 14.3 - Random power-up drops from destroyed bricks
   - [x] 14.4 - Power-up collection and effects
   - [x] 14.5 - Visual effects for active power-ups
-- [ ] step 15 - Sound System
-  - [ ] 15.1 - Create `SoundManager` class
-  - [ ] 15.2 - Add sound effects (ball hit, brick break, power-up, etc.)
-  - [ ] 15.3 - Implement background music
-  - [ ] 15.4 - Add volume controls
-  - [ ] 15.5 - Efficient audio resource management
+- [x] step 15 - Sound System
+  - [x] 15.1 - Create `SoundManager` class
+  - [x] 15.2 - Add sound effects (ball hit, brick break, power-up, etc.)
+  - [x] 15.3 - Implement background music
+  - [x] 15.4 - Add volume controls
+  - [x] 15.5 - Efficient audio resource management
 - [ ] step 16 - Visual Effects & Animations
   - [ ] 16.1 - Add particle effects for brick destruction
   - [ ] 16.2 - Smooth animations for power-up effects
