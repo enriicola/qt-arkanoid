@@ -14,35 +14,74 @@ LevelManager::LevelManager(QObject *parent)
 
 bool LevelManager::loadLevels()
 {
-    // Try to load levels from JSON files in a levels directory
-    QString levelsDir = QCoreApplication::applicationDirPath() + "/levels";
-    QDir dir(levelsDir);
-    
-    if (!dir.exists()) {
-        qDebug() << "Levels directory not found, using default levels";
-        createDefaultLevels();
-        return true;
-    }
-    
     m_levels.clear();
     
-    // Load level files (level1.json, level2.json, etc.)
-    QStringList filters;
-    filters << "level*.json";
-    QStringList levelFiles = dir.entryList(filters, QDir::Files, QDir::Name);
+    // Try to load levels from Qt resources first
+    QStringList resourceLevels = {
+        ":/levels/resources/levels/level1.json",
+        ":/levels/resources/levels/level2.json",
+        ":/levels/resources/levels/level3.json"
+    };
     
-    for (const QString &filename : levelFiles) {
-        QString filePath = dir.filePath(filename);
-        auto level = std::make_unique<Level>();
+    bool anyLoaded = false;
+    for (const QString &resourcePath : resourceLevels) {
+        QFile file(resourcePath);
+        if (!file.exists()) {
+            qWarning() << "Resource level file not found:" << resourcePath;
+            continue;
+        }
         
-        if (level->loadFromJson(filePath)) {
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Failed to open resource level:" << resourcePath << file.errorString();
+            continue;
+        }
+        
+        auto level = std::make_unique<Level>();
+        if (level->loadFromJson(resourcePath)) {
             m_levels.push_back(std::move(level));
+            anyLoaded = true;
+            qDebug() << "Loaded level from resource:" << resourcePath;
+        } else {
+            qWarning() << "Failed to parse level from resource:" << resourcePath;
         }
     }
     
-    if (m_levels.empty()) {
-        qDebug() << "No valid levels found, creating defaults";
+    // Fallback: Try to load from external directory
+    if (!anyLoaded) {
+        QString levelsDir = QCoreApplication::applicationDirPath() + "/levels";
+        QDir dir(levelsDir);
+        
+        if (dir.exists()) {
+            QStringList filters;
+            filters << "level*.json";
+            QStringList levelFiles = dir.entryList(filters, QDir::Files, QDir::Name);
+            
+            for (const QString &filename : levelFiles) {
+                QString filePath = dir.filePath(filename);
+                QFile file(filePath);
+                
+                if (!file.open(QIODevice::ReadOnly)) {
+                    qWarning() << "Failed to open level file:" << filePath << file.errorString();
+                    continue;
+                }
+                
+                auto level = std::make_unique<Level>();
+                if (level->loadFromJson(filePath)) {
+                    m_levels.push_back(std::move(level));
+                    anyLoaded = true;
+                    qDebug() << "Loaded level from file:" << filePath;
+                } else {
+                    qWarning() << "Failed to parse level file:" << filePath;
+                }
+            }
+        }
+    }
+    
+    // Last resort: Create default levels programmatically
+    if (!anyLoaded) {
+        qWarning() << "No levels found in resources or files, creating default levels";
         createDefaultLevels();
+        return !m_levels.empty();
     }
     
     return !m_levels.empty();

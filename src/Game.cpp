@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QIcon>
 
 Game::Game(QWidget *parent)
     : QMainWindow(parent), settingsDialog(nullptr)
@@ -21,7 +22,12 @@ Game::Game(QWidget *parent)
     
     highScoreManager = new HighScoreManager(this);
     levelManager = new LevelManager(this);
-    levelManager->createDefaultLevels();
+    
+    // Load levels from resources or fallback to defaults
+    if (!levelManager->loadLevels()) {
+        QMessageBox::warning(this, "Level Loading Error",
+                           "Failed to load any levels. The game may not function properly.");
+    }
     
     createActions();
     createMenus();
@@ -43,6 +49,12 @@ void Game::setupWindow()
 {
     setFixedSize(800, 600);
     setWindowTitle("Qt Arkanoid");
+    
+    QIcon icon(":/images/resources/images/icon.svg");
+    if (!icon.isNull()) {
+        setWindowIcon(icon);
+        QApplication::setWindowIcon(icon);
+    }
 }
 
 void Game::centerWindow()

@@ -140,12 +140,12 @@ A step-by-step project to learn Qt by building the classic Arkanoid/Breakout gam
   - [x] 18.3 - Progressive difficulty (ball speed, brick strength)
   - [x] 18.4 - Level transition animations
   - [x] 18.5 - Save game progress
-- [ ] step 19 - Resource Management & Assets
-  - [ ] 19.1 - Create `resources.qrc` file for all game assets
-  - [ ] 19.2 - Optimize image formats and sizes
-  - [ ] 19.3 - Implement asset loading error handling
-  - [ ] 19.4 - Create game icon and application metadata
-  - [ ] 19.5 - Test resource loading
+- [x] step 19 - Resource Management & Assets
+  - [x] 19.1 - Create `resources.qrc` file for all game assets
+  - [x] 19.2 - Optimize image formats and sizes
+  - [x] 19.3 - Implement asset loading error handling
+  - [x] 19.4 - Create game icon and application metadata
+  - [x] 19.5 - Test resource loading
 - [ ] step 20 - Performance Optimization
   - [ ] 20.1 - Profile game performance (identify bottlenecks)
   - [ ] 20.2 - Optimize rendering (reduce unnecessary redraws)

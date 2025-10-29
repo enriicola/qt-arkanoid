@@ -1,0 +1,42 @@
+{
+    "levelNumber": 3,
+    "name": "Pyramid Challenge",
+    "description": "A pyramid of tough bricks awaits!",
+    "ballSpeed": 340.0,
+    "bricks": [
+        {"row": 0, "col": 4, "color": "#FF6464", "hitPoints": 3},
+        {"row": 0, "col": 5, "color": "#FF6464", "hitPoints": 3},
+        
+        {"row": 1, "col": 3, "color": "#FFB464", "hitPoints": 3},
+        {"row": 1, "col": 4, "color": "#FFB464", "hitPoints": 2},
+        {"row": 1, "col": 5, "color": "#FFB464", "hitPoints": 2},
+        {"row": 1, "col": 6, "color": "#FFB464", "hitPoints": 3},
+        
+        {"row": 2, "col": 2, "color": "#FFFF64", "hitPoints": 2},
+        {"row": 2, "col": 3, "color": "#FFFF64", "hitPoints": 2},
+        {"row": 2, "col": 4, "color": "#FFFF64", "hitPoints": 2},
+        {"row": 2, "col": 5, "color": "#FFFF64", "hitPoints": 2},
+        {"row": 2, "col": 6, "color": "#FFFF64", "hitPoints": 2},
+        {"row": 2, "col": 7, "color": "#FFFF64", "hitPoints": 2},
+        
+        {"row": 3, "col": 1, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 2, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 3, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 4, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 5, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 6, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 7, "color": "#64FF64", "hitPoints": 1},
+        {"row": 3, "col": 8, "color": "#64FF64", "hitPoints": 1},
+        
+        {"row": 4, "col": 0, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 1, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 2, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 3, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 4, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 5, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 6, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 7, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 8, "color": "#6464FF", "hitPoints": 1},
+        {"row": 4, "col": 9, "color": "#6464FF", "hitPoints": 1}
+    ]
+}
