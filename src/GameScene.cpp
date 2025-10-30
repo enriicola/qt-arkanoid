@@ -903,15 +903,12 @@ void GameScene::loadCurrentLevel()
         return;
     }
     
-    // Update ball speed based on level data
     if (m_ball && level->ballSpeed() > 0.0) {
         m_ball->setSpeed(level->ballSpeed());
     }
     
-    // Recreate bricks from level data
     createBricks();
     
-    // Reset level state
     m_levelComplete = false;
     m_levelTransitionTimer = 0.0;
 }
