@@ -33,8 +33,6 @@ GameScene::GameScene(QWidget *parent)
     m_ball = std::make_unique<Ball>(400.0, 300.0, 8.0);
     m_soundManager = std::make_unique<SoundManager>(this);
     
-    createBricks();
-    
     connect(&m_gameTimer, &QTimer::timeout, this, &GameScene::gameLoop);
     m_gameTimer.start(static_cast<int>(FRAME_TIME));
     m_elapsedTimer.start();
